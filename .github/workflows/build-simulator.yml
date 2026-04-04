@@ -1,0 +1,50 @@
+name: Build iOS Simulator App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          pod install
+
+      - name: Build simulator app
+        run: |
+          xcodebuild \
+            -workspace ios/UbertApp.xcworkspace \
+            -scheme UbertApp \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO
+
+      - name: Zip .app bundle
+        run: |
+          APP_PATH=$(find build -name "*.app" -type d | head -1)
+          cd "$(dirname "$APP_PATH")"
+          zip -r "$GITHUB_WORKSPACE/UbertApp-simulator.zip" "$(basename "$APP_PATH")"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UbertApp-simulator
+          path: UbertApp-simulator.zip
