@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,32 +6,25 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
+  Image,
 } from 'react-native';
-import MapView, {Marker, PROVIDER_DEFAULT} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomTabBar} from '../components/common/BottomTabBar';
-import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
-import {currentLocation, suggestedPlaces, recentPlaces, Place} from '../data/mockPlaces';
-import {Colors, Spacing} from '../theme';
+import {recentPlaces, suggestedPlaces, Place} from '../data/mockPlaces';
+import {Colors} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };
 
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) {return 'Good morning';}
-  if (hour < 17) {return 'Good afternoon';}
-  return 'Good evening';
-}
-
 export function HomeScreen({navigation}: Props) {
   const insets = useSafeAreaInsets();
   const {dispatch} = useTrip();
+  const [activeTab, setActiveTab] = useState<'rides' | 'delivery'>('rides');
 
   const handleSearchPress = useCallback(() => {
     navigation.navigate('Search');
@@ -46,156 +39,206 @@ export function HomeScreen({navigation}: Props) {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       <StatusBar barStyle="dark-content" />
 
-      {/* Map */}
-      <MapView
-        provider={PROVIDER_DEFAULT}
-        style={styles.map}
-        initialRegion={{
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-          latitudeDelta: 0.012,
-          longitudeDelta: 0.012,
-        }}
-        showsUserLocation={false}
-        showsMyLocationButton={false}>
-        <Marker
-          coordinate={{
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude,
-          }}>
-          <View style={styles.markerOuter}>
-            <View style={styles.markerInner} />
-          </View>
-        </Marker>
-      </MapView>
-
-      {/* Top bar */}
-      <View style={[styles.topBar, {top: insets.top + 8}]}>
-        <TouchableOpacity style={styles.topBtn}>
-          <Icon name="menu" size={22} color={Colors.black} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.topBtnDark}>
-          <Icon name="person" size={20} color={Colors.white} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Bottom sheet area */}
-      <View style={styles.sheetWrapper}>
-        <View style={styles.sheet}>
-          <View style={styles.handle} />
-
-          {/* Greeting */}
-          <Text style={styles.greeting}>{getGreeting()}</Text>
-
-          {/* Search bar */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        {/* Rides / Delivery tabs */}
+        <View style={styles.tabsRow}>
           <TouchableOpacity
-            style={styles.searchBar}
-            onPress={handleSearchPress}
-            activeOpacity={0.85}>
-            <View style={styles.searchIcon}>
-              <Icon name="search" size={18} color={Colors.gray700} />
-            </View>
-            <Text style={styles.searchText}>Where to?</Text>
-            <View style={styles.nowPill}>
-              <Icon name="access-time" size={14} color={Colors.white} />
-              <Text style={styles.nowText}>Now</Text>
-              <Icon name="keyboard-arrow-down" size={14} color={Colors.white} />
-            </View>
+            style={[styles.tab, activeTab === 'rides' && styles.tabActive]}
+            onPress={() => setActiveTab('rides')}>
+            <Text style={styles.tabEmoji}>🚗</Text>
+            <Text
+              style={[
+                styles.tabLabel,
+                activeTab === 'rides' && styles.tabLabelActive,
+              ]}>
+              Rides
+            </Text>
+            {activeTab === 'rides' && <View style={styles.tabUnderline} />}
           </TouchableOpacity>
 
-          {/* Service pills */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.pillsScroll}
-            contentContainerStyle={styles.pillsContent}>
-            <Pill emoji="🚗" label="Ride" active />
-            <Pill emoji="📦" label="Package" />
-            <Pill emoji="🚐" label="Shuttle" />
-            <Pill emoji="🔑" label="Rental" />
-            <Pill emoji="📅" label="Reserve" />
-          </ScrollView>
-
-          <Divider style={{marginTop: 14}} />
-
-          {/* Saved places */}
-          <View style={styles.savedRow}>
-            <TouchableOpacity
-              style={styles.savedChip}
-              onPress={() => handlePlacePress(recentPlaces[0])}>
-              <View style={styles.savedIconWrap}>
-                <Icon name="home" size={14} color={Colors.white} />
-              </View>
-              <Text style={styles.savedLabel}>Home</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.savedChip}
-              onPress={() => handlePlacePress(recentPlaces[1])}>
-              <View style={styles.savedIconWrap}>
-                <Icon name="work" size={14} color={Colors.white} />
-              </View>
-              <Text style={styles.savedLabel}>Work</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.savedChipOutline}>
-              <Icon name="more-horiz" size={18} color={Colors.gray700} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Recent / suggested list */}
-          <ScrollView
-            style={styles.placesList}
-            showsVerticalScrollIndicator={false}
-            bounces={false}>
-            {suggestedPlaces.slice(0, 3).map((place, i) => (
-              <TouchableOpacity
-                key={place.id}
-                style={styles.placeRow}
-                onPress={() => handlePlacePress(place)}>
-                <View style={styles.placeCircle}>
-                  <Icon
-                    name={i === 0 ? 'history' : 'place'}
-                    size={16}
-                    color={Colors.gray700}
-                  />
-                </View>
-                <View style={styles.placeInfo}>
-                  <Text style={styles.placeName}>{place.name}</Text>
-                  <Text style={styles.placeAddr} numberOfLines={1}>
-                    {place.address}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'delivery' && styles.tabActive]}
+            onPress={() => setActiveTab('delivery')}>
+            <Text style={styles.tabEmoji}>🍔</Text>
+            <Text
+              style={[
+                styles.tabLabel,
+                activeTab === 'delivery' && styles.tabLabelActive,
+              ]}>
+              Delivery
+            </Text>
+            {activeTab === 'delivery' && <View style={styles.tabUnderline} />}
+          </TouchableOpacity>
         </View>
 
-        {/* Bottom tab bar */}
-        <BottomTabBar />
-      </View>
+        {/* Search bar */}
+        <TouchableOpacity
+          style={styles.searchBar}
+          onPress={handleSearchPress}
+          activeOpacity={0.85}>
+          <Icon name="search" size={20} color={Colors.gray700} />
+          <Text style={styles.searchText}>Where to?</Text>
+          <View style={styles.nowPill}>
+            <Icon name="schedule" size={14} color={Colors.black} />
+            <Text style={styles.nowLabel}>Now</Text>
+            <Icon name="keyboard-arrow-down" size={16} color={Colors.black} />
+          </View>
+        </TouchableOpacity>
+
+        {/* Saved places */}
+        <TouchableOpacity
+          style={styles.savedPlaceRow}
+          onPress={() => handlePlacePress(recentPlaces[1])}>
+          <View style={styles.savedIcon}>
+            <Icon name="work" size={16} color={Colors.white} />
+          </View>
+          <View style={styles.savedInfo}>
+            <Text style={styles.savedName}>Work</Text>
+            <Text style={styles.savedAddr}>{recentPlaces[1].address}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.savedDivider} />
+
+        <TouchableOpacity
+          style={styles.savedPlaceRow}
+          onPress={() => handlePlacePress(recentPlaces[0])}>
+          <View style={styles.savedIcon}>
+            <Icon name="home" size={16} color={Colors.white} />
+          </View>
+          <View style={styles.savedInfo}>
+            <Text style={styles.savedName}>Home</Text>
+            <Text style={styles.savedAddr}>{recentPlaces[0].address}</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Divider band */}
+        <View style={styles.sectionDivider} />
+
+        {/* Suggestions */}
+        <View style={styles.suggestionsHeader}>
+          <Text style={styles.sectionTitle}>Suggestions</Text>
+          <TouchableOpacity>
+            <Text style={styles.seeAll}>See all</Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.cardsRow}>
+          <SuggestionCard
+            emoji="🚗"
+            label="Ride"
+            onPress={handleSearchPress}
+          />
+          <SuggestionCard emoji="📦" label="Package" />
+          <SuggestionCard emoji="📅" label="Reserve" />
+          <SuggestionCard emoji="🔑" label="Rent" />
+        </ScrollView>
+
+        {/* Ways to plan */}
+        <Text style={[styles.sectionTitle, {marginTop: 24, marginHorizontal: 16}]}>
+          Ways to plan with Uber
+        </Text>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.promoRow}>
+          <PromoCard
+            title="Reserve a ride"
+            subtitle="Plan ahead for your trip"
+            color="#E8F5E9"
+            icon="event-available"
+          />
+          <PromoCard
+            title="Explore locally"
+            subtitle="Find popular destinations"
+            color="#F3E5F5"
+            icon="explore"
+          />
+        </ScrollView>
+
+        {/* More destinations */}
+        <View style={styles.sectionDivider} />
+        <Text style={[styles.sectionTitle, {marginHorizontal: 16, marginTop: 16}]}>
+          Recent destinations
+        </Text>
+        {suggestedPlaces.slice(0, 3).map(place => (
+          <TouchableOpacity
+            key={place.id}
+            style={styles.recentRow}
+            onPress={() => handlePlacePress(place)}>
+            <View style={styles.recentIcon}>
+              <Icon name="history" size={16} color={Colors.gray700} />
+            </View>
+            <View style={styles.recentInfo}>
+              <Text style={styles.recentName}>{place.name}</Text>
+              <Text style={styles.recentAddr} numberOfLines={1}>
+                {place.address}
+              </Text>
+            </View>
+            <Icon name="chevron-right" size={20} color={Colors.gray300} />
+          </TouchableOpacity>
+        ))}
+
+        <View style={{height: 20}} />
+      </ScrollView>
+
+      <BottomTabBar />
     </View>
   );
 }
 
-function Pill({
+function SuggestionCard({
   emoji,
   label,
-  active,
+  onPress,
 }: {
   emoji: string;
   label: string;
-  active?: boolean;
+  onPress?: () => void;
 }) {
   return (
-    <TouchableOpacity
-      style={[styles.pill, active && styles.pillActive]}
-      activeOpacity={0.7}>
-      <Text style={styles.pillEmoji}>{emoji}</Text>
-      <Text style={[styles.pillLabel, active && styles.pillLabelActive]}>
-        {label}
-      </Text>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+      <View style={styles.cardImageWrap}>
+        <Text style={styles.cardEmoji}>{emoji}</Text>
+      </View>
+      <Text style={styles.cardLabel}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function PromoCard({
+  title,
+  subtitle,
+  color,
+  icon,
+}: {
+  title: string;
+  subtitle: string;
+  color: string;
+  icon: string;
+}) {
+  return (
+    <TouchableOpacity style={[styles.promoCard, {backgroundColor: color}]} activeOpacity={0.8}>
+      <View style={styles.promoContent}>
+        <Text style={styles.promoTitle}>{title}</Text>
+        <Text style={styles.promoSub}>{subtitle}</Text>
+        <View style={styles.promoArrow}>
+          <Icon name="arrow-forward" size={16} color={Colors.black} />
+        </View>
+      </View>
+      <View style={styles.promoIconWrap}>
+        <Icon name={icon} size={48} color="rgba(0,0,0,0.12)" />
+      </View>
     </TouchableOpacity>
   );
 }
@@ -203,93 +246,67 @@ function Pill({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray100,
+    backgroundColor: Colors.white,
   },
-  map: {
+  scroll: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 8,
+  },
 
-  // Top bar
-  topBar: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
+  // Tabs
+  tabsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    zIndex: 10,
-  },
-  topBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  topBtnDark: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#333',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  // Sheet
-  sheetWrapper: {
-    backgroundColor: Colors.white,
-  },
-  sheet: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 12,
+    paddingBottom: 4,
+    gap: 20,
   },
-  handle: {
-    width: 32,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.gray300,
-    alignSelf: 'center',
-    marginBottom: 14,
+  tab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 10,
+    gap: 6,
   },
-  greeting: {
-    fontSize: 24,
+  tabActive: {},
+  tabEmoji: {
+    fontSize: 20,
+  },
+  tabLabel: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: Colors.gray500,
+  },
+  tabLabelActive: {
     fontWeight: '700',
     color: Colors.black,
-    letterSpacing: -0.3,
+  },
+  tabUnderline: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    backgroundColor: Colors.black,
+    borderRadius: 1.5,
   },
 
   // Search bar
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#F0F0F0',
     borderRadius: 28,
+    marginHorizontal: 16,
     marginTop: 14,
-    height: 48,
-    paddingLeft: 14,
-    paddingRight: 5,
-  },
-  searchIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#DCDCDC',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 50,
+    paddingLeft: 16,
+    paddingRight: 6,
   },
   searchText: {
     flex: 1,
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '500',
     color: Colors.gray500,
     marginLeft: 10,
@@ -297,101 +314,159 @@ const styles = StyleSheet.create({
   nowPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.black,
-    borderRadius: 18,
+    backgroundColor: Colors.white,
+    borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 7,
-    gap: 2,
+    gap: 3,
   },
-  nowText: {
-    fontSize: 12,
+  nowLabel: {
+    fontSize: 13,
     fontWeight: '600',
-    color: Colors.white,
-    marginHorizontal: 2,
+    color: Colors.black,
   },
 
-  // Service pills
-  pillsScroll: {
-    marginTop: 14,
-    flexGrow: 0,
-  },
-  pillsContent: {
-    gap: 8,
-  },
-  pill: {
+  // Saved places
+  savedPlaceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F3F3',
-    borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
-  pillActive: {
-    backgroundColor: Colors.black,
+  savedIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#333',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  pillEmoji: {
-    fontSize: 15,
+  savedInfo: {
+    flex: 1,
+    marginLeft: 14,
   },
-  pillLabel: {
+  savedName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+  savedAddr: {
+    fontSize: 13,
+    color: Colors.gray500,
+    marginTop: 2,
+  },
+  savedDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#E8E8E8',
+    marginLeft: 66,
+    marginRight: 16,
+  },
+
+  // Section divider
+  sectionDivider: {
+    height: 8,
+    backgroundColor: '#F5F5F5',
+    marginTop: 4,
+  },
+
+  // Suggestions
+  suggestionsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 18,
+    paddingBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.black,
+  },
+  seeAll: {
     fontSize: 14,
     fontWeight: '500',
     color: Colors.gray700,
   },
-  pillLabelActive: {
-    color: Colors.white,
-  },
 
-  // Saved chips
-  savedRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 14,
+  // Cards
+  cardsRow: {
+    paddingHorizontal: 16,
+    gap: 12,
   },
-  savedChip: {
-    flexDirection: 'row',
+  card: {
+    width: 100,
     alignItems: 'center',
-    backgroundColor: '#F3F3F3',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    gap: 8,
   },
-  savedIconWrap: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#555',
+  cardImageWrap: {
+    width: 92,
+    height: 80,
+    borderRadius: 14,
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  savedLabel: {
+  cardEmoji: {
+    fontSize: 36,
+  },
+  cardLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
+    color: Colors.black,
+    marginTop: 8,
+  },
+
+  // Promo cards
+  promoRow: {
+    paddingHorizontal: 16,
+    gap: 12,
+    marginTop: 12,
+  },
+  promoCard: {
+    width: 220,
+    height: 120,
+    borderRadius: 14,
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  promoContent: {
+    flex: 1,
+    padding: 14,
+    justifyContent: 'space-between',
+  },
+  promoTitle: {
+    fontSize: 15,
+    fontWeight: '700',
     color: Colors.black,
   },
-  savedChipOutline: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F3F3',
+  promoSub: {
+    fontSize: 12,
+    color: Colors.gray700,
+    marginTop: 2,
+  },
+  promoArrow: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  promoIconWrap: {
+    width: 80,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
-  // Places list
-  placesList: {
-    marginTop: 4,
-    maxHeight: 160,
-  },
-  placeRow: {
+  // Recent
+  recentRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
     paddingVertical: 13,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
   },
-  placeCircle: {
+  recentIcon: {
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -399,36 +474,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  placeInfo: {
+  recentInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 14,
   },
-  placeName: {
+  recentName: {
     fontSize: 15,
     fontWeight: '500',
     color: Colors.black,
   },
-  placeAddr: {
+  recentAddr: {
     fontSize: 13,
     color: Colors.gray500,
     marginTop: 1,
-  },
-
-  // Map marker
-  markerOuter: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: 'rgba(39,110,241,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  markerInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#276EF1',
-    borderWidth: 2,
-    borderColor: Colors.white,
   },
 });

@@ -31,6 +31,9 @@ export function TripInProgressScreen({navigation, route}: Props) {
     routeCoordinates[carIndex] ||
     routeCoordinates[routeCoordinates.length - 1];
 
+  // Remaining route: from car's current position to destination
+  const remainingRoute = routeCoordinates.slice(carIndex);
+
   useEffect(() => {
     const stepTime = TRIP_DURATION / routeCoordinates.length;
     const interval = setInterval(() => {
@@ -92,18 +95,24 @@ export function TripInProgressScreen({navigation, route}: Props) {
           latitudeDelta: 0.025,
           longitudeDelta: 0.025,
         }}>
-        <Polyline
-          coordinates={routeCoordinates}
-          strokeColor={Colors.black}
-          strokeWidth={4}
-        />
+        {/* Route line — only shows remaining path, shrinks as car moves */}
+        {remainingRoute.length >= 2 && (
+          <Polyline
+            coordinates={remainingRoute}
+            strokeColor={Colors.black}
+            strokeWidth={4}
+          />
+        )}
+
+        {/* Car marker */}
         <Marker coordinate={carCoord}>
           <View style={styles.carMarker}>
             <Icon name="local-taxi" size={18} color={Colors.white} />
           </View>
         </Marker>
-        <Marker
-          coordinate={routeCoordinates[routeCoordinates.length - 1]}>
+
+        {/* Destination marker */}
+        <Marker coordinate={routeCoordinates[routeCoordinates.length - 1]}>
           <View style={styles.destMarker} />
         </Marker>
       </MapView>
@@ -198,8 +207,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.white,
   },
-
-  // Bottom card
   bottomCard: {
     position: 'absolute',
     bottom: 0,

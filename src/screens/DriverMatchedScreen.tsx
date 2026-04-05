@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, StatusBar, Text, Image, TouchableOpacity} from 'react-native';
-import MapView, {Marker, PROVIDER_DEFAULT} from 'react-native-maps';
+import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
@@ -10,7 +10,7 @@ import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {driverApproachCoords} from '../data/mockRouteCoords';
-import {Colors, Spacing} from '../theme';
+import {Colors} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'DriverMatched'>;
@@ -27,6 +27,9 @@ export function DriverMatchedScreen({navigation, route}: Props) {
   const driverCoord =
     driverApproachCoords[driverIndex] ||
     driverApproachCoords[driverApproachCoords.length - 1];
+
+  // The remaining route: from current driver position to pickup (end of array)
+  const remainingRoute = driverApproachCoords.slice(driverIndex);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -71,6 +74,16 @@ export function DriverMatchedScreen({navigation, route}: Props) {
             latitudeDelta: 0.015,
             longitudeDelta: 0.015,
           }}>
+          {/* Route line from driver to pickup — shrinks as driver progresses */}
+          {remainingRoute.length >= 2 && (
+            <Polyline
+              coordinates={remainingRoute}
+              strokeColor={Colors.black}
+              strokeWidth={4}
+            />
+          )}
+
+          {/* Pickup marker */}
           <Marker
             coordinate={{
               latitude: state.origin.latitude,
@@ -80,6 +93,8 @@ export function DriverMatchedScreen({navigation, route}: Props) {
               <View style={styles.pickupDot} />
             </View>
           </Marker>
+
+          {/* Driver marker */}
           <Marker
             coordinate={{
               latitude: driverCoord.latitude,
@@ -104,7 +119,9 @@ export function DriverMatchedScreen({navigation, route}: Props) {
         <View style={styles.handle} />
 
         <Text style={styles.statusText}>
-          {arrived ? `${driver.name} has arrived` : `${driver.name} is on the way`}
+          {arrived
+            ? `${driver.name} has arrived`
+            : `${driver.name} is on the way`}
         </Text>
         <Text style={styles.carText}>
           {driver.carColor} {driver.carModel} · {driver.licensePlate}
@@ -120,7 +137,10 @@ export function DriverMatchedScreen({navigation, route}: Props) {
             <View style={styles.ratingRow}>
               <Icon name="star" size={14} color={Colors.black} />
               <Text style={styles.ratingText}>{driver.rating}</Text>
-              <Text style={styles.tripsText}> · {driver.totalTrips} trips</Text>
+              <Text style={styles.tripsText}>
+                {' '}
+                · {driver.totalTrips} trips
+              </Text>
             </View>
           </View>
           <View style={styles.plateBox}>
@@ -210,8 +230,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.white,
   },
-
-  // Bottom card
   bottomCard: {
     backgroundColor: Colors.white,
     borderTopLeftRadius: 20,
@@ -237,8 +255,6 @@ const styles = StyleSheet.create({
     color: Colors.gray500,
     marginTop: 4,
   },
-
-  // Driver
   driverRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -286,8 +302,6 @@ const styles = StyleSheet.create({
     color: Colors.black,
     letterSpacing: 0.5,
   },
-
-  // Actions
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
