@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Text} from 'react-native';
+import {View, StyleSheet, StatusBar, Text, Image} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -39,7 +39,11 @@ export function FindingDriverScreen({navigation, route}: Props) {
         {/* Animated ring */}
         <View style={styles.ring}>
           <View style={styles.ringInner}>
-            <Text style={styles.carEmoji}>🚗</Text>
+            <Image
+              source={{uri: rideOption.imageUrl}}
+              style={styles.carImage}
+              resizeMode="contain"
+            />
           </View>
         </View>
 
@@ -72,7 +76,7 @@ export function FindingDriverScreen({navigation, route}: Props) {
             title="Cancel"
             variant="outline"
             onPress={() => navigation.goBack()}
-            style={{borderColor: '#444'}}
+            style={{borderColor: 'rgba(255,255,255,0.3)'}}
           />
         </View>
       </View>
@@ -108,8 +112,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  carEmoji: {
-    fontSize: 32,
+  carImage: {
+    width: 48,
+    height: 32,
   },
   heading: {
     fontSize: 22,

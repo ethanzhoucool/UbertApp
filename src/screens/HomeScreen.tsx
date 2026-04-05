@@ -143,7 +143,6 @@ export function HomeScreen({navigation}: Props) {
             onPress={handleSearchPress}
           />
           <SuggestionCard
-            imageUrl="https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberXL_v1.png"
             fallbackIcon="inventory-2"
             label="Package"
           />
