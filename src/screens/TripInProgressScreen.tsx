@@ -3,8 +3,7 @@ import {View, StyleSheet, StatusBar, Animated} from 'react-native';
 import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MIcon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {UbertText} from '../components/common/UbertText';
 import {Divider} from '../components/common/Divider';
@@ -98,7 +97,7 @@ export function TripInProgressScreen({navigation, route}: Props) {
         />
         <Marker coordinate={carCoord}>
           <View style={styles.carMarker}>
-            <Icon name="car-side" size={22} color={Colors.white} />
+            <Icon name="local-taxi" size={20} color={Colors.white} />
           </View>
         </Marker>
         <Marker coordinate={routeCoordinates[routeCoordinates.length - 1]}>
@@ -151,7 +150,7 @@ function ActionButton({icon, label}: {icon: string; label: string}) {
   return (
     <View style={styles.actionBtn}>
       <View style={styles.actionCircle}>
-        <MIcon name={icon} size={20} color={Colors.black} />
+        <Icon name={icon} size={20} color={Colors.black} />
       </View>
       <UbertText variant="caption" style={{marginTop: 4}}>
         {label}

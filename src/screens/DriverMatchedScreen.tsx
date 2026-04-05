@@ -3,7 +3,7 @@ import {View, StyleSheet, StatusBar} from 'react-native';
 import MapView, {Marker, PROVIDER_DEFAULT} from 'react-native-maps';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {DriverCard} from '../components/driver/DriverCard';
 import {UbertButton} from '../components/common/UbertButton';
 import {RootStackParamList} from '../navigation/types';
@@ -90,7 +90,7 @@ export function DriverMatchedScreen({navigation, route}: Props) {
               longitude: driverCoord.longitude,
             }}>
             <View style={styles.carMarker}>
-              <Icon name="car-side" size={24} color={Colors.white} />
+              <Icon name="local-taxi" size={22} color={Colors.white} />
             </View>
           </Marker>
         </MapView>

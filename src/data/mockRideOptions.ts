@@ -7,7 +7,7 @@ export interface RideOption {
   priceRange?: string;
   capacity: number;
   multiplier?: string;
-  icon: string;
+  imageUrl: string;
 }
 
 export const rideOptions: RideOption[] = [
@@ -18,7 +18,8 @@ export const rideOptions: RideOption[] = [
     eta: 3,
     price: '$12.43',
     capacity: 4,
-    icon: 'car',
+    imageUrl:
+      'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberX_v1.png',
   },
   {
     id: 'comfort',
@@ -27,7 +28,8 @@ export const rideOptions: RideOption[] = [
     eta: 4,
     price: '$15.82',
     capacity: 4,
-    icon: 'car-sport',
+    imageUrl:
+      'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberComfort_v1.png',
   },
   {
     id: 'uberxl',
@@ -36,7 +38,8 @@ export const rideOptions: RideOption[] = [
     eta: 5,
     price: '$18.24',
     capacity: 6,
-    icon: 'car-estate',
+    imageUrl:
+      'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberXL_v1.png',
   },
   {
     id: 'black',
@@ -46,6 +49,7 @@ export const rideOptions: RideOption[] = [
     price: '$32.10',
     capacity: 4,
     multiplier: '1.2x',
-    icon: 'car-side',
+    imageUrl:
+      'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/Black_v1.png',
   },
 ];

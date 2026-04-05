@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {UbertText} from '../common/UbertText';
+import {View, Image, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {RideOption} from '../../data/mockRideOptions';
 import {Colors, Spacing} from '../../theme';
 
@@ -17,32 +16,31 @@ export function RideOptionCard({option, selected, onSelect}: Props) {
       style={[styles.card, selected && styles.selected]}
       onPress={() => onSelect(option)}
       activeOpacity={0.7}>
-      <View style={styles.iconContainer}>
-        <Icon name="car-side" size={40} color={Colors.black} />
-      </View>
+      <Image
+        source={{uri: option.imageUrl}}
+        style={styles.carImage}
+        resizeMode="contain"
+      />
       <View style={styles.info}>
         <View style={styles.nameRow}>
-          <UbertText variant="body" color={Colors.black} style={{fontWeight: '700', fontSize: 16}}>
-            {option.name}
-          </UbertText>
+          <Text style={styles.name}>{option.name}</Text>
           <View style={styles.capacityBadge}>
-            <Icon name="account" size={12} color={Colors.gray700} />
-            <UbertText variant="caption" style={{marginLeft: 2}}>
-              {option.capacity}
-            </UbertText>
+            <Icon name="person" size={12} color={Colors.gray500} />
+            <Text style={styles.capacityText}>{option.capacity}</Text>
           </View>
         </View>
-        <UbertText variant="caption">
+        <Text style={styles.eta}>
           {option.eta} min away
-        </UbertText>
-        <UbertText variant="caption" numberOfLines={1}>
+        </Text>
+        <Text style={styles.desc} numberOfLines={1}>
           {option.description}
-        </UbertText>
+        </Text>
       </View>
       <View style={styles.priceContainer}>
-        <UbertText variant="body" color={Colors.black} style={{fontWeight: '700'}}>
-          {option.price}
-        </UbertText>
+        <Text style={styles.price}>{option.price}</Text>
+        {option.multiplier && (
+          <Text style={styles.multiplier}>{option.multiplier}</Text>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -52,38 +50,66 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.md,
+    paddingVertical: 14,
     paddingHorizontal: Spacing.base,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: 'transparent',
-    marginBottom: Spacing.sm,
+    marginBottom: 4,
   },
   selected: {
     borderColor: Colors.black,
     backgroundColor: Colors.gray100,
   },
-  iconContainer: {
-    width: 64,
+  carImage: {
+    width: 72,
     height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   info: {
     flex: 1,
-    marginLeft: Spacing.sm,
+    marginLeft: Spacing.md,
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  name: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.black,
+  },
   capacityBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: Spacing.sm,
+    marginLeft: 8,
+  },
+  capacityText: {
+    fontSize: 12,
+    color: Colors.gray500,
+    marginLeft: 2,
+  },
+  eta: {
+    fontSize: 13,
+    color: Colors.gray500,
+    marginTop: 2,
+  },
+  desc: {
+    fontSize: 13,
+    color: Colors.gray500,
+    marginTop: 1,
   },
   priceContainer: {
     alignItems: 'flex-end',
     minWidth: 60,
+  },
+  price: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.black,
+  },
+  multiplier: {
+    fontSize: 11,
+    color: Colors.gray500,
+    marginTop: 2,
   },
 });
