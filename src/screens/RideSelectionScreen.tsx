@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import {View, StyleSheet, ScrollView, StatusBar, TouchableOpacity, Text} from 'react-native';
 import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,7 +11,7 @@ import {RideOptionCard} from '../components/ride/RideOptionCard';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {rideOptions, RideOption} from '../data/mockRideOptions';
-import {routeCoordinates} from '../data/mockRouteCoords';
+import {generateRoute} from '../utils/generateRoute';
 import {Colors, Spacing} from '../theme';
 
 type Props = {
@@ -26,6 +26,11 @@ export function RideSelectionScreen({navigation, route}: Props) {
   const [selectedRide, setSelectedRide] = useState<RideOption | null>(null);
 
   const origin = state.origin;
+
+  const routeCoords = useMemo(
+    () => generateRoute(origin, destination),
+    [origin, destination],
+  );
 
   const handleChooseRide = () => {
     if (!selectedRide) {return;}
@@ -74,7 +79,7 @@ export function RideSelectionScreen({navigation, route}: Props) {
             <View style={styles.destMarker} />
           </Marker>
           <Polyline
-            coordinates={routeCoordinates}
+            coordinates={routeCoords}
             strokeColor={Colors.black}
             strokeWidth={4}
           />
