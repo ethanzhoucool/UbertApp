@@ -11,12 +11,12 @@ import MapView, {Marker, PROVIDER_DEFAULT} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {UbertText} from '../components/common/UbertText';
+import {BottomTabBar} from '../components/common/BottomTabBar';
 import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {currentLocation, suggestedPlaces, recentPlaces, Place} from '../data/mockPlaces';
-import {Colors, Spacing, Shadows} from '../theme';
+import {Colors, Spacing} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
@@ -24,8 +24,8 @@ type Props = {
 
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
+  if (hour < 12) {return 'Good morning';}
+  if (hour < 17) {return 'Good afternoon';}
   return 'Good evening';
 }
 
@@ -49,6 +49,7 @@ export function HomeScreen({navigation}: Props) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
+      {/* Map */}
       <MapView
         provider={PROVIDER_DEFAULT}
         style={styles.map}
@@ -73,112 +74,126 @@ export function HomeScreen({navigation}: Props) {
 
       {/* Top bar */}
       <View style={[styles.topBar, {top: insets.top + 8}]}>
-        <TouchableOpacity style={styles.circleBtn}>
-          <Icon name="menu" size={24} color={Colors.black} />
+        <TouchableOpacity style={styles.topBtn}>
+          <Icon name="menu" size={22} color={Colors.black} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.circleBtnDark}>
+        <TouchableOpacity style={styles.topBtnDark}>
           <Icon name="person" size={20} color={Colors.white} />
         </TouchableOpacity>
       </View>
 
-      {/* Bottom sheet */}
-      <View style={[styles.bottomSheet, {paddingBottom: insets.bottom + 8}]}>
-        <View style={styles.handle} />
+      {/* Bottom sheet area */}
+      <View style={styles.sheetWrapper}>
+        <View style={styles.sheet}>
+          <View style={styles.handle} />
 
-        {/* Greeting */}
-        <Text style={styles.greeting}>{getGreeting()}</Text>
+          {/* Greeting */}
+          <Text style={styles.greeting}>{getGreeting()}</Text>
 
-        {/* Search bar */}
-        <TouchableOpacity
-          style={styles.searchBar}
-          onPress={handleSearchPress}
-          activeOpacity={0.9}>
-          <View style={styles.searchDot} />
-          <Text style={styles.searchPlaceholder}>Where to?</Text>
-          <View style={styles.schedulePill}>
-            <Icon name="access-time" size={14} color={Colors.white} />
-            <Text style={styles.schedulePillText}>Now</Text>
-            <Icon name="keyboard-arrow-down" size={16} color={Colors.white} />
-          </View>
-        </TouchableOpacity>
+          {/* Search bar */}
+          <TouchableOpacity
+            style={styles.searchBar}
+            onPress={handleSearchPress}
+            activeOpacity={0.85}>
+            <View style={styles.searchIcon}>
+              <Icon name="search" size={18} color={Colors.gray700} />
+            </View>
+            <Text style={styles.searchText}>Where to?</Text>
+            <View style={styles.nowPill}>
+              <Icon name="access-time" size={14} color={Colors.white} />
+              <Text style={styles.nowText}>Now</Text>
+              <Icon name="keyboard-arrow-down" size={14} color={Colors.white} />
+            </View>
+          </TouchableOpacity>
 
-        {/* Service categories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.servicesScroll}
-          contentContainerStyle={styles.servicesContent}>
-          <ServicePill icon="🚗" label="Ride" active />
-          <ServicePill icon="📦" label="Package" />
-          <ServicePill icon="🔑" label="Rental" />
-          <ServicePill icon="📅" label="Reserve" />
-          <ServicePill icon="🚐" label="Shuttle" />
-        </ScrollView>
+          {/* Service pills */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.pillsScroll}
+            contentContainerStyle={styles.pillsContent}>
+            <Pill emoji="🚗" label="Ride" active />
+            <Pill emoji="📦" label="Package" />
+            <Pill emoji="🚐" label="Shuttle" />
+            <Pill emoji="🔑" label="Rental" />
+            <Pill emoji="📅" label="Reserve" />
+          </ScrollView>
 
-        <Divider style={{marginTop: Spacing.md}} />
+          <Divider style={{marginTop: 14}} />
 
-        {/* Saved places */}
-        <ScrollView
-          style={styles.placesList}
-          showsVerticalScrollIndicator={false}>
-          {/* Saved shortcuts */}
+          {/* Saved places */}
           <View style={styles.savedRow}>
             <TouchableOpacity
-              style={styles.savedPill}
+              style={styles.savedChip}
               onPress={() => handlePlacePress(recentPlaces[0])}>
-              <Icon name="home" size={18} color={Colors.white} />
-              <Text style={styles.savedPillText}>Home</Text>
+              <View style={styles.savedIconWrap}>
+                <Icon name="home" size={14} color={Colors.white} />
+              </View>
+              <Text style={styles.savedLabel}>Home</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.savedPill}
+              style={styles.savedChip}
               onPress={() => handlePlacePress(recentPlaces[1])}>
-              <Icon name="work" size={18} color={Colors.white} />
-              <Text style={styles.savedPillText}>Work</Text>
+              <View style={styles.savedIconWrap}>
+                <Icon name="work" size={14} color={Colors.white} />
+              </View>
+              <Text style={styles.savedLabel}>Work</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.savedChipOutline}>
+              <Icon name="more-horiz" size={18} color={Colors.gray700} />
             </TouchableOpacity>
           </View>
 
-          {/* Recent & suggested */}
-          {suggestedPlaces.slice(0, 4).map((place, i) => (
-            <TouchableOpacity
-              key={place.id}
-              style={styles.placeRow}
-              onPress={() => handlePlacePress(place)}>
-              <View style={styles.placeIconCircle}>
-                <Icon name={i < 2 ? 'history' : 'place'} size={18} color={Colors.white} />
-              </View>
-              <View style={styles.placeTextWrap}>
-                <Text style={styles.placeName}>{place.name}</Text>
-                <Text style={styles.placeAddr} numberOfLines={1}>
-                  {place.address}
-                </Text>
-              </View>
-              <Icon name="chevron-right" size={20} color={Colors.gray300} />
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          {/* Recent / suggested list */}
+          <ScrollView
+            style={styles.placesList}
+            showsVerticalScrollIndicator={false}
+            bounces={false}>
+            {suggestedPlaces.slice(0, 3).map((place, i) => (
+              <TouchableOpacity
+                key={place.id}
+                style={styles.placeRow}
+                onPress={() => handlePlacePress(place)}>
+                <View style={styles.placeCircle}>
+                  <Icon
+                    name={i === 0 ? 'history' : 'place'}
+                    size={16}
+                    color={Colors.gray700}
+                  />
+                </View>
+                <View style={styles.placeInfo}>
+                  <Text style={styles.placeName}>{place.name}</Text>
+                  <Text style={styles.placeAddr} numberOfLines={1}>
+                    {place.address}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Bottom tab bar */}
+        <BottomTabBar />
       </View>
     </View>
   );
 }
 
-function ServicePill({
-  icon,
+function Pill({
+  emoji,
   label,
   active,
 }: {
-  icon: string;
+  emoji: string;
   label: string;
   active?: boolean;
 }) {
   return (
     <TouchableOpacity
-      style={[styles.servicePill, active && styles.servicePillActive]}>
-      <Text style={styles.serviceEmoji}>{icon}</Text>
-      <Text
-        style={[
-          styles.serviceLabel,
-          active && styles.serviceLabelActive,
-        ]}>
+      style={[styles.pill, active && styles.pillActive]}
+      activeOpacity={0.7}>
+      <Text style={styles.pillEmoji}>{emoji}</Text>
+      <Text style={[styles.pillLabel, active && styles.pillLabelActive]}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -191,195 +206,215 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gray100,
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
+
+  // Top bar
   topBar: {
     position: 'absolute',
-    left: Spacing.base,
-    right: Spacing.base,
+    left: 16,
+    right: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     zIndex: 10,
   },
-  circleBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+  topBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  circleBtnDark: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.gray700,
+  topBtnDark: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#333',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  bottomSheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+
+  // Sheet
+  sheetWrapper: {
     backgroundColor: Colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: Spacing.base,
-    paddingTop: 10,
-    maxHeight: '58%',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: -4},
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
+  },
+  sheet: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
   },
   handle: {
-    width: 36,
+    width: 32,
     height: 4,
     borderRadius: 2,
     backgroundColor: Colors.gray300,
     alignSelf: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: 14,
   },
   greeting: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '700',
     color: Colors.black,
-    marginBottom: Spacing.md,
+    letterSpacing: -0.3,
   },
+
+  // Search bar
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.gray100,
+    backgroundColor: '#EEEEEE',
     borderRadius: 28,
-    paddingLeft: 16,
-    paddingRight: 6,
-    height: 52,
+    marginTop: 14,
+    height: 48,
+    paddingLeft: 14,
+    paddingRight: 5,
   },
-  searchDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.gray700,
+  searchIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#DCDCDC',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  searchPlaceholder: {
+  searchText: {
     flex: 1,
-    marginLeft: 12,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '500',
     color: Colors.gray500,
+    marginLeft: 10,
   },
-  schedulePill: {
+  nowPill: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.black,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    gap: 3,
+    borderRadius: 18,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    gap: 2,
   },
-  schedulePillText: {
-    fontSize: 13,
+  nowText: {
+    fontSize: 12,
     fontWeight: '600',
     color: Colors.white,
+    marginHorizontal: 2,
   },
-  servicesScroll: {
-    marginTop: Spacing.md,
+
+  // Service pills
+  pillsScroll: {
+    marginTop: 14,
+    flexGrow: 0,
   },
-  servicesContent: {
-    gap: 10,
-    paddingRight: Spacing.base,
+  pillsContent: {
+    gap: 8,
   },
-  servicePill: {
+  pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.gray100,
-    borderRadius: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    backgroundColor: '#F3F3F3',
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
     gap: 6,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
   },
-  servicePillActive: {
+  pillActive: {
     backgroundColor: Colors.black,
-    borderColor: Colors.black,
   },
-  serviceEmoji: {
-    fontSize: 16,
+  pillEmoji: {
+    fontSize: 15,
   },
-  serviceLabel: {
+  pillLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: Colors.gray700,
   },
-  serviceLabelActive: {
+  pillLabelActive: {
     color: Colors.white,
   },
+
+  // Saved chips
   savedRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.sm,
+    gap: 8,
+    marginTop: 14,
   },
-  savedPill: {
+  savedChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.gray700,
+    backgroundColor: '#F3F3F3',
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
     gap: 8,
   },
-  savedPillText: {
+  savedIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#555',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  savedLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.white,
+    color: Colors.black,
   },
+  savedChipOutline: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F3F3F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Places list
   placesList: {
-    flexGrow: 0,
+    marginTop: 4,
+    maxHeight: 160,
   },
   placeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: 13,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.gray200,
+    borderBottomColor: '#ECECEC',
   },
-  placeIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.gray700,
+  placeCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  placeTextWrap: {
+  placeInfo: {
     flex: 1,
-    marginLeft: Spacing.md,
+    marginLeft: 12,
   },
   placeName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.black,
   },
   placeAddr: {
     fontSize: 13,
     color: Colors.gray500,
-    marginTop: 2,
+    marginTop: 1,
   },
+
+  // Map marker
   markerOuter: {
     width: 22,
     height: 22,
@@ -392,7 +427,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: Colors.accent,
+    backgroundColor: '#276EF1',
     borderWidth: 2,
     borderColor: Colors.white,
   },

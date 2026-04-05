@@ -1,24 +1,23 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, StyleSheet, StatusBar, Animated} from 'react-native';
+import {View, StyleSheet, StatusBar, Animated, Text, TouchableOpacity} from 'react-native';
 import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {UbertText} from '../components/common/UbertText';
 import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {routeCoordinates} from '../data/mockRouteCoords';
 import {getArrivalTime} from '../utils/formatTime';
-import {Colors, Spacing, Shadows} from '../theme';
+import {Colors} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'TripInProgress'>;
   route: RouteProp<RootStackParamList, 'TripInProgress'>;
 };
 
-const TRIP_DURATION = 10000; // 10 seconds demo
+const TRIP_DURATION = 10000;
 
 export function TripInProgressScreen({navigation, route}: Props) {
   const insets = useSafeAreaInsets();
@@ -28,16 +27,16 @@ export function TripInProgressScreen({navigation, route}: Props) {
   const progressAnim = useRef(new Animated.Value(0)).current;
   const [minutesLeft, setMinutesLeft] = useState(8);
 
-  const carCoord = routeCoordinates[carIndex] || routeCoordinates[routeCoordinates.length - 1];
+  const carCoord =
+    routeCoordinates[carIndex] ||
+    routeCoordinates[routeCoordinates.length - 1];
 
-  // Animate car along route
   useEffect(() => {
     const stepTime = TRIP_DURATION / routeCoordinates.length;
     const interval = setInterval(() => {
       setCarIndex(prev => {
         if (prev >= routeCoordinates.length - 1) {
           clearInterval(interval);
-          // Trip complete
           setTimeout(() => {
             navigation.replace('TripComplete', {
               driver,
@@ -50,11 +49,9 @@ export function TripInProgressScreen({navigation, route}: Props) {
         return prev + 1;
       });
     }, stepTime);
-
     return () => clearInterval(interval);
   }, [navigation, driver, state.selectedRide]);
 
-  // Progress bar animation
   useEffect(() => {
     Animated.timing(progressAnim, {
       toValue: 1,
@@ -63,7 +60,6 @@ export function TripInProgressScreen({navigation, route}: Props) {
     }).start();
   }, [progressAnim]);
 
-  // Minutes countdown
   useEffect(() => {
     const interval = setInterval(() => {
       setMinutesLeft(prev => (prev > 0 ? prev - 1 : 0));
@@ -85,8 +81,14 @@ export function TripInProgressScreen({navigation, route}: Props) {
         provider={PROVIDER_DEFAULT}
         style={styles.map}
         initialRegion={{
-          latitude: (routeCoordinates[0].latitude + routeCoordinates[routeCoordinates.length - 1].latitude) / 2,
-          longitude: (routeCoordinates[0].longitude + routeCoordinates[routeCoordinates.length - 1].longitude) / 2,
+          latitude:
+            (routeCoordinates[0].latitude +
+              routeCoordinates[routeCoordinates.length - 1].latitude) /
+            2,
+          longitude:
+            (routeCoordinates[0].longitude +
+              routeCoordinates[routeCoordinates.length - 1].longitude) /
+            2,
           latitudeDelta: 0.025,
           longitudeDelta: 0.025,
         }}>
@@ -97,65 +99,66 @@ export function TripInProgressScreen({navigation, route}: Props) {
         />
         <Marker coordinate={carCoord}>
           <View style={styles.carMarker}>
-            <Icon name="local-taxi" size={20} color={Colors.white} />
+            <Icon name="local-taxi" size={18} color={Colors.white} />
           </View>
         </Marker>
-        <Marker coordinate={routeCoordinates[routeCoordinates.length - 1]}>
+        <Marker
+          coordinate={routeCoordinates[routeCoordinates.length - 1]}>
           <View style={styles.destMarker} />
         </Marker>
       </MapView>
 
       {/* Arrival chip */}
-      <View style={[styles.arrivalChip, {top: insets.top + 12}]}>
-        <UbertText variant="body" color={Colors.white} style={{fontWeight: '700'}}>
-          Arriving at {getArrivalTime(minutesLeft)}
-        </UbertText>
+      <View style={[styles.arrivalChip, {top: insets.top + 10}]}>
+        <Text style={styles.arrivalText}>
+          {minutesLeft > 0
+            ? `Arriving at ${getArrivalTime(minutesLeft)}`
+            : 'Arriving now'}
+        </Text>
       </View>
 
       {/* Bottom card */}
-      <View style={[styles.bottomCard, Shadows.card, {paddingBottom: insets.bottom + 16}]}>
+      <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 12}]}>
         <View style={styles.handle} />
 
-        <UbertText variant="body" color={Colors.black} style={{fontWeight: '600', marginTop: 8}}>
-          On the way to your destination
-        </UbertText>
-        <UbertText variant="caption" style={{marginTop: 4}}>
-          {driver.name} \u2022 {driver.carColor} {driver.carModel}
-        </UbertText>
+        <Text style={styles.heading}>On the way to your destination</Text>
+        <Text style={styles.sub}>
+          {driver.name} · {driver.carColor} {driver.carModel}
+        </Text>
 
-        <Divider style={{marginVertical: Spacing.md}} />
+        <Divider style={{marginVertical: 12}} />
 
         {/* Progress bar */}
-        <View style={styles.progressBarBg}>
-          <Animated.View style={[styles.progressBarFill, {width: progressWidth}]} />
+        <View style={styles.progressBg}>
+          <Animated.View
+            style={[styles.progressFill, {width: progressWidth}]}
+          />
         </View>
-        <UbertText variant="caption" style={{marginTop: 8}}>
-          {minutesLeft > 0 ? `Arriving in ${minutesLeft} min` : 'Arriving now'}
-        </UbertText>
+        <Text style={styles.progressLabel}>
+          {minutesLeft > 0 ? `${minutesLeft} min remaining` : 'Arriving now'}
+        </Text>
 
-        <Divider style={{marginVertical: Spacing.md}} />
+        <Divider style={{marginVertical: 12}} />
 
         {/* Action buttons */}
         <View style={styles.actionsRow}>
-          <ActionButton icon="share" label="Share trip" />
-          <ActionButton icon="phone" label="Contact" />
-          <ActionButton icon="shield" label="Safety" />
+          <ActionBtn icon="share" label="Share trip" />
+          <ActionBtn icon="phone" label="Contact" />
+          <ActionBtn icon="shield" label="Safety" />
         </View>
       </View>
     </View>
   );
 }
 
-function ActionButton({icon, label}: {icon: string; label: string}) {
+function ActionBtn({icon, label}: {icon: string; label: string}) {
   return (
-    <View style={styles.actionBtn}>
+    <TouchableOpacity style={styles.actionItem}>
       <View style={styles.actionCircle}>
         <Icon name={icon} size={20} color={Colors.black} />
       </View>
-      <UbertText variant="caption" style={{marginTop: 4}}>
-        {label}
-      </UbertText>
-    </View>
+      <Text style={styles.actionLabel}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -167,9 +170,9 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   carMarker: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     backgroundColor: Colors.black,
     alignItems: 'center',
     justifyContent: 'center',
@@ -186,10 +189,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: Colors.black,
-    borderRadius: 24,
-    paddingHorizontal: 20,
+    borderRadius: 22,
+    paddingHorizontal: 18,
     paddingVertical: 10,
   },
+  arrivalText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+
+  // Bottom card
   bottomCard: {
     position: 'absolute',
     bottom: 0,
@@ -198,40 +208,66 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.md,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: -3},
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 8,
   },
   handle: {
-    width: 40,
+    width: 32,
     height: 4,
     borderRadius: 2,
     backgroundColor: Colors.gray300,
     alignSelf: 'center',
+    marginBottom: 14,
   },
-  progressBarBg: {
+  heading: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.black,
+  },
+  sub: {
+    fontSize: 14,
+    color: Colors.gray500,
+    marginTop: 3,
+  },
+  progressBg: {
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.gray200,
+    backgroundColor: '#EEEEEE',
     overflow: 'hidden',
   },
-  progressBarFill: {
+  progressFill: {
     height: '100%',
     backgroundColor: Colors.black,
     borderRadius: 2,
+  },
+  progressLabel: {
+    fontSize: 13,
+    color: Colors.gray500,
+    marginTop: 6,
   },
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
-  actionBtn: {
+  actionItem: {
     alignItems: 'center',
   },
   actionCircle: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.gray100,
+    backgroundColor: '#F3F3F3',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  actionLabel: {
+    fontSize: 11,
+    color: Colors.gray700,
+    marginTop: 5,
   },
 });

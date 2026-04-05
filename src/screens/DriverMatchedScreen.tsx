@@ -1,15 +1,16 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, StyleSheet, StatusBar} from 'react-native';
+import {View, StyleSheet, StatusBar, Text, Image, TouchableOpacity} from 'react-native';
 import MapView, {Marker, PROVIDER_DEFAULT} from 'react-native-maps';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {DriverCard} from '../components/driver/DriverCard';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {UbertButton} from '../components/common/UbertButton';
+import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {driverApproachCoords} from '../data/mockRouteCoords';
-import {Colors, Spacing, Shadows} from '../theme';
+import {Colors, Spacing} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'DriverMatched'>;
@@ -17,15 +18,16 @@ type Props = {
 };
 
 export function DriverMatchedScreen({navigation, route}: Props) {
+  const insets = useSafeAreaInsets();
   const {driver} = route.params;
   const {state} = useTrip();
   const [driverIndex, setDriverIndex] = useState(0);
   const [eta, setEta] = useState(3);
-  const mapRef = useRef<MapView>(null);
 
-  const driverCoord = driverApproachCoords[driverIndex] || driverApproachCoords[driverApproachCoords.length - 1];
+  const driverCoord =
+    driverApproachCoords[driverIndex] ||
+    driverApproachCoords[driverApproachCoords.length - 1];
 
-  // Animate driver approaching
   useEffect(() => {
     const interval = setInterval(() => {
       setDriverIndex(prev => {
@@ -36,11 +38,9 @@ export function DriverMatchedScreen({navigation, route}: Props) {
         return prev + 1;
       });
     }, 1200);
-
     return () => clearInterval(interval);
   }, []);
 
-  // ETA countdown
   useEffect(() => {
     const interval = setInterval(() => {
       setEta(prev => {
@@ -51,19 +51,18 @@ export function DriverMatchedScreen({navigation, route}: Props) {
         return prev - 1;
       });
     }, 2800);
-
     return () => clearInterval(interval);
   }, []);
 
-  const driverArrived = driverIndex >= driverApproachCoords.length - 1;
+  const arrived = driverIndex >= driverApproachCoords.length - 1;
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      <View style={styles.mapContainer}>
+      {/* Map */}
+      <View style={styles.mapArea}>
         <MapView
-          ref={mapRef}
           provider={PROVIDER_DEFAULT}
           style={styles.map}
           initialRegion={{
@@ -72,7 +71,6 @@ export function DriverMatchedScreen({navigation, route}: Props) {
             latitudeDelta: 0.015,
             longitudeDelta: 0.015,
           }}>
-          {/* Pickup marker */}
           <Marker
             coordinate={{
               latitude: state.origin.latitude,
@@ -82,39 +80,69 @@ export function DriverMatchedScreen({navigation, route}: Props) {
               <View style={styles.pickupDot} />
             </View>
           </Marker>
-
-          {/* Driver marker */}
           <Marker
             coordinate={{
               latitude: driverCoord.latitude,
               longitude: driverCoord.longitude,
             }}>
             <View style={styles.carMarker}>
-              <Icon name="local-taxi" size={22} color={Colors.white} />
+              <Icon name="local-taxi" size={20} color={Colors.white} />
             </View>
           </Marker>
         </MapView>
+
+        {/* ETA chip */}
+        {!arrived && (
+          <View style={[styles.etaChip, {top: insets.top + 10}]}>
+            <Text style={styles.etaChipText}>{eta} min away</Text>
+          </View>
+        )}
       </View>
 
-      <View style={[styles.bottomCard, Shadows.card]}>
+      {/* Bottom card */}
+      <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 12}]}>
         <View style={styles.handle} />
-        <DriverCard
-          driver={driver}
-          eta={driverArrived ? 0 : eta}
-          statusText={
-            driverArrived
-              ? `${driver.name} has arrived`
-              : `${driver.name} is on the way`
-          }
-        />
 
-        {driverArrived && (
-          <View style={styles.startTripBtn}>
+        <Text style={styles.statusText}>
+          {arrived ? `${driver.name} has arrived` : `${driver.name} is on the way`}
+        </Text>
+        <Text style={styles.carText}>
+          {driver.carColor} {driver.carModel} · {driver.licensePlate}
+        </Text>
+
+        <Divider style={{marginVertical: 14}} />
+
+        {/* Driver info */}
+        <View style={styles.driverRow}>
+          <Image source={{uri: driver.avatarUrl}} style={styles.avatar} />
+          <View style={styles.driverInfo}>
+            <Text style={styles.driverName}>{driver.name}</Text>
+            <View style={styles.ratingRow}>
+              <Icon name="star" size={14} color={Colors.black} />
+              <Text style={styles.ratingText}>{driver.rating}</Text>
+              <Text style={styles.tripsText}> · {driver.totalTrips} trips</Text>
+            </View>
+          </View>
+          <View style={styles.plateBox}>
+            <Text style={styles.plateText}>{driver.licensePlate}</Text>
+          </View>
+        </View>
+
+        <Divider style={{marginVertical: 14}} />
+
+        {/* Action buttons */}
+        <View style={styles.actionsRow}>
+          <ActionCircle icon="chat-bubble-outline" label="Message" />
+          <ActionCircle icon="phone" label="Call" />
+          <ActionCircle icon="share" label="Share trip" />
+          <ActionCircle icon="shield" label="Safety" />
+        </View>
+
+        {arrived && (
+          <View style={{marginTop: 16}}>
             <UbertButton
               title="Start Trip"
-              onPress={() =>
-                navigation.replace('TripInProgress', {driver})
-              }
+              onPress={() => navigation.replace('TripInProgress', {driver})}
             />
           </View>
         )}
@@ -123,13 +151,24 @@ export function DriverMatchedScreen({navigation, route}: Props) {
   );
 }
 
+function ActionCircle({icon, label}: {icon: string; label: string}) {
+  return (
+    <TouchableOpacity style={styles.actionBtn}>
+      <View style={styles.actionCircle}>
+        <Icon name={icon} size={20} color={Colors.black} />
+      </View>
+      <Text style={styles.actionLabel}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.gray100,
   },
-  mapContainer: {
-    height: '45%',
+  mapArea: {
+    flex: 1,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -146,35 +185,127 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: Colors.accent,
+    backgroundColor: '#276EF1',
     borderWidth: 2,
     borderColor: Colors.white,
   },
   carMarker: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: Colors.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  etaChip: {
+    position: 'absolute',
+    alignSelf: 'center',
+    backgroundColor: Colors.black,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  etaChipText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+
+  // Bottom card
   bottomCard: {
-    flex: 1,
     backgroundColor: Colors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    marginTop: -16,
+    paddingHorizontal: 16,
+    paddingTop: 10,
   },
   handle: {
-    width: 40,
+    width: 32,
     height: 4,
     borderRadius: 2,
     backgroundColor: Colors.gray300,
     alignSelf: 'center',
-    marginTop: Spacing.md,
+    marginBottom: 14,
   },
-  startTripBtn: {
-    paddingHorizontal: Spacing.base,
-    paddingBottom: Spacing.xl,
+  statusText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.black,
+  },
+  carText: {
+    fontSize: 14,
+    color: Colors.gray500,
+    marginTop: 4,
+  },
+
+  // Driver
+  driverRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Colors.gray200,
+  },
+  driverInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  driverName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  ratingText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.black,
+    marginLeft: 3,
+  },
+  tripsText: {
+    fontSize: 13,
+    color: Colors.gray500,
+  },
+  plateBox: {
+    borderWidth: 1.5,
+    borderColor: Colors.gray300,
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  plateText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.black,
+    letterSpacing: 0.5,
+  },
+
+  // Actions
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  actionBtn: {
+    alignItems: 'center',
+  },
+  actionCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F3F3F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionLabel: {
+    fontSize: 11,
+    color: Colors.gray700,
+    marginTop: 5,
   },
 });

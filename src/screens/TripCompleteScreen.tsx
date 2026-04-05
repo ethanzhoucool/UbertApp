@@ -1,10 +1,17 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, ScrollView, StatusBar, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  StatusBar,
+  Image,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {UbertText} from '../components/common/UbertText';
 import {UbertButton} from '../components/common/UbertButton';
 import {StarRating} from '../components/common/StarRating';
 import {Divider} from '../components/common/Divider';
@@ -22,7 +29,7 @@ export function TripCompleteScreen({navigation, route}: Props) {
   const [rating, setRating] = useState(0);
   const [selectedTip, setSelectedTip] = useState<string | null>(null);
 
-  const tipOptions = ['$1', '$2', '$5', 'Custom'];
+  const tipOptions = ['$1', '$2', '$5', 'Other'];
 
   const handleDone = () => {
     navigation.reset({
@@ -36,94 +43,104 @@ export function TripCompleteScreen({navigation, route}: Props) {
       <StatusBar barStyle="dark-content" />
 
       <ScrollView
-        style={styles.scrollView}
+        style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        {/* Success icon */}
-        <View style={styles.successIcon}>
-          <Icon name="check-circle" size={64} color={Colors.black} />
+        {/* Route line visual */}
+        <View style={styles.routeVisual}>
+          <View style={[styles.routeDot, {backgroundColor: '#276EF1'}]} />
+          <View style={styles.routeLine} />
+          <View style={[styles.routeDot, {backgroundColor: Colors.black}]} />
         </View>
 
-        <UbertText variant="title" style={styles.title}>
-          You've arrived!
-        </UbertText>
+        <Text style={styles.title}>You've arrived</Text>
+        <Text style={styles.subtitle}>
+          Hope you had a great ride!
+        </Text>
 
-        {/* Trip summary */}
-        <View style={styles.tripSummary}>
-          <SummaryItem icon="place" label="Distance" value="2.3 mi" />
-          <SummaryItem icon="access-time" label="Duration" value={duration} />
-          <SummaryItem icon="attach-money" label="Total" value={fare} />
+        {/* Trip stats */}
+        <View style={styles.statsRow}>
+          <StatItem icon="straighten" label="Distance" value="2.3 mi" />
+          <View style={styles.statDivider} />
+          <StatItem icon="access-time" label="Duration" value={duration} />
+          <View style={styles.statDivider} />
+          <StatItem icon="receipt" label="Total" value={fare} />
         </View>
 
-        <Divider style={{marginVertical: Spacing.lg}} />
+        <Divider style={{marginVertical: 20}} />
 
-        {/* Rating */}
-        <UbertText variant="body" color={Colors.black} style={{fontWeight: '600', textAlign: 'center'}}>
-          How was your trip with {driver.name}?
-        </UbertText>
-
-        <View style={styles.ratingContainer}>
-          <StarRating
-            rating={rating}
-            onRate={setRating}
-            interactive
-            size={40}
-          />
+        {/* Driver + rating */}
+        <View style={styles.driverSection}>
+          <Image source={{uri: driver.avatarUrl}} style={styles.avatar} />
+          <Text style={styles.rateQuestion}>
+            How was your trip with {driver.name}?
+          </Text>
+          <StarRating rating={rating} onRate={setRating} interactive size={40} />
         </View>
 
-        <Divider style={{marginVertical: Spacing.lg}} />
+        {rating >= 4 && (
+          <>
+            <Divider style={{marginVertical: 20}} />
 
-        {/* Tip section */}
-        <UbertText variant="body" color={Colors.black} style={{fontWeight: '600'}}>
-          Add a tip for {driver.name}
-        </UbertText>
+            {/* Compliments */}
+            <Text style={styles.sectionTitle}>Compliments</Text>
+            <View style={styles.complimentsRow}>
+              <Compliment icon="chat-bubble-outline" label="Great chat" />
+              <Compliment icon="navigation" label="Expert navigation" />
+              <Compliment icon="music-note" label="Great music" />
+              <Compliment icon="clean-hands" label="Clean car" />
+            </View>
+          </>
+        )}
 
+        <Divider style={{marginVertical: 20}} />
+
+        {/* Tip */}
+        <Text style={styles.sectionTitle}>Add a tip for {driver.name}</Text>
+        <Text style={styles.tipSubtext}>
+          Tips go directly to your driver. You can also tip later.
+        </Text>
         <View style={styles.tipRow}>
           {tipOptions.map(tip => (
             <TouchableOpacity
               key={tip}
               style={[
                 styles.tipPill,
-                selectedTip === tip && styles.tipPillSelected,
+                selectedTip === tip && styles.tipPillActive,
               ]}
-              onPress={() => setSelectedTip(tip === selectedTip ? null : tip)}>
-              <UbertText
-                variant="body"
-                color={selectedTip === tip ? Colors.white : Colors.black}
-                style={{fontWeight: '600'}}>
+              onPress={() =>
+                setSelectedTip(tip === selectedTip ? null : tip)
+              }>
+              <Text
+                style={[
+                  styles.tipPillText,
+                  selectedTip === tip && styles.tipPillTextActive,
+                ]}>
                 {tip}
-              </UbertText>
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        <Divider style={{marginVertical: Spacing.lg}} />
+        <Divider style={{marginVertical: 20}} />
 
         {/* Driver info */}
-        <View style={styles.driverRow}>
-          <Image
-            source={{uri: driver.avatarUrl}}
-            style={styles.driverAvatar}
-          />
-          <View style={{marginLeft: Spacing.md}}>
-            <UbertText variant="body" color={Colors.black} style={{fontWeight: '600'}}>
-              {driver.name}
-            </UbertText>
-            <UbertText variant="caption">
-              {driver.carColor} {driver.carModel} \u2022 {driver.licensePlate}
-            </UbertText>
+        <View style={styles.driverInfoRow}>
+          <Image source={{uri: driver.avatarUrl}} style={styles.smallAvatar} />
+          <View style={{marginLeft: 12, flex: 1}}>
+            <Text style={styles.driverName}>{driver.name}</Text>
+            <Text style={styles.carDetail}>
+              {driver.carColor} {driver.carModel} · {driver.licensePlate}
+            </Text>
           </View>
-        </View>
-
-        {/* Compliments */}
-        <View style={styles.complimentsRow}>
-          <ComplimentChip icon="chat-bubble-outline" label="Great conversation" />
-          <ComplimentChip icon="navigation" label="Expert navigation" />
-          <ComplimentChip icon="music-note" label="Good music" />
+          <View style={styles.ratingBadge}>
+            <Icon name="star" size={14} color={Colors.black} />
+            <Text style={styles.ratingBadgeText}>{driver.rating}</Text>
+          </View>
         </View>
       </ScrollView>
 
-      {/* Done button */}
+      {/* Fixed footer */}
       <View style={[styles.footer, {paddingBottom: insets.bottom + 8}]}>
         <UbertButton title="Done" onPress={handleDone} />
       </View>
@@ -131,7 +148,7 @@ export function TripCompleteScreen({navigation, route}: Props) {
   );
 }
 
-function SummaryItem({
+function StatItem({
   icon,
   label,
   value,
@@ -141,25 +158,19 @@ function SummaryItem({
   value: string;
 }) {
   return (
-    <View style={styles.summaryItem}>
+    <View style={styles.statItem}>
       <Icon name={icon} size={20} color={Colors.gray700} />
-      <UbertText variant="caption" style={{marginTop: 4}}>
-        {label}
-      </UbertText>
-      <UbertText variant="body" color={Colors.black} style={{fontWeight: '700'}}>
-        {value}
-      </UbertText>
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue}>{value}</Text>
     </View>
   );
 }
 
-function ComplimentChip({icon, label}: {icon: string; label: string}) {
+function Compliment({icon, label}: {icon: string; label: string}) {
   return (
     <TouchableOpacity style={styles.complimentChip}>
       <Icon name={icon} size={16} color={Colors.gray700} />
-      <UbertText variant="caption" style={{marginLeft: 6}}>
-        {label}
-      </UbertText>
+      <Text style={styles.complimentText}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -169,63 +180,107 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
   },
-  scrollView: {
+  scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
   },
-  successIcon: {
-    alignSelf: 'center',
-    marginBottom: Spacing.base,
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: Spacing.xl,
-  },
-  tripSummary: {
+
+  // Route visual
+  routeVisual: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  summaryItem: {
-    alignItems: 'center',
-  },
-  ratingContainer: {
-    marginTop: Spacing.base,
-    alignItems: 'center',
-  },
-  tipRow: {
-    flexDirection: 'row',
-    marginTop: Spacing.md,
-    gap: 10,
-  },
-  tipPill: {
-    flex: 1,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.gray100,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
+    gap: 0,
   },
-  tipPillSelected: {
-    backgroundColor: Colors.black,
+  routeDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
-  driverRow: {
+  routeLine: {
+    width: 80,
+    height: 3,
+    backgroundColor: Colors.gray300,
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: Colors.black,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 15,
+    color: Colors.gray500,
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  // Stats
+  statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+    gap: 0,
   },
-  driverAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: Colors.gray500,
+    marginTop: 4,
+  },
+  statValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.black,
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 36,
     backgroundColor: Colors.gray200,
   },
+
+  // Driver rating
+  driverSection: {
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.gray200,
+    marginBottom: 14,
+  },
+  rateQuestion: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.black,
+    marginBottom: 14,
+    textAlign: 'center',
+  },
+
+  // Section title
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+
+  // Compliments
   complimentsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: Spacing.base,
+    marginTop: 10,
     gap: 8,
   },
   complimentChip: {
@@ -236,10 +291,80 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    gap: 6,
   },
+  complimentText: {
+    fontSize: 13,
+    color: Colors.gray700,
+  },
+
+  // Tips
+  tipSubtext: {
+    fontSize: 13,
+    color: Colors.gray500,
+    marginTop: 4,
+  },
+  tipRow: {
+    flexDirection: 'row',
+    marginTop: 12,
+    gap: 10,
+  },
+  tipPill: {
+    flex: 1,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F3F3F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tipPillActive: {
+    backgroundColor: Colors.black,
+  },
+  tipPillText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+  tipPillTextActive: {
+    color: Colors.white,
+  },
+
+  // Driver info
+  driverInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  smallAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.gray200,
+  },
+  driverName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+  carDetail: {
+    fontSize: 13,
+    color: Colors.gray500,
+    marginTop: 2,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  ratingBadgeText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.black,
+  },
+
+  // Footer
   footer: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.md,
+    paddingHorizontal: 24,
+    paddingTop: 10,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: Colors.gray200,
   },

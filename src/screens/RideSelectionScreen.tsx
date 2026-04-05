@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, ScrollView, StatusBar} from 'react-native';
+import {View, StyleSheet, ScrollView, StatusBar, TouchableOpacity, Text} from 'react-native';
 import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {UbertText} from '../components/common/UbertText';
 import {UbertButton} from '../components/common/UbertButton';
 import {Divider} from '../components/common/Divider';
 import {RideOptionCard} from '../components/ride/RideOptionCard';
@@ -12,7 +12,7 @@ import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {rideOptions, RideOption} from '../data/mockRideOptions';
 import {routeCoordinates} from '../data/mockRouteCoords';
-import {Colors, Spacing, Shadows} from '../theme';
+import {Colors, Spacing} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'RideSelection'>;
@@ -28,7 +28,7 @@ export function RideSelectionScreen({navigation, route}: Props) {
   const origin = state.origin;
 
   const handleChooseRide = () => {
-    if (!selectedRide) return;
+    if (!selectedRide) {return;}
     dispatch({type: 'SET_RIDE', payload: selectedRide});
     navigation.navigate('FindingDriver', {rideOption: selectedRide});
   };
@@ -37,7 +37,14 @@ export function RideSelectionScreen({navigation, route}: Props) {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* Map top half */}
+      {/* Back button */}
+      <TouchableOpacity
+        style={[styles.backBtn, {top: insets.top + 8}]}
+        onPress={() => navigation.goBack()}>
+        <Icon name="arrow-back" size={22} color={Colors.black} />
+      </TouchableOpacity>
+
+      {/* Map top portion */}
       <View style={styles.mapContainer}>
         <MapView
           provider={PROVIDER_DEFAULT}
@@ -50,7 +57,6 @@ export function RideSelectionScreen({navigation, route}: Props) {
             longitudeDelta:
               Math.abs(origin.longitude - destination.longitude) * 2.5 + 0.01,
           }}>
-          {/* Origin marker */}
           <Marker
             coordinate={{
               latitude: origin.latitude,
@@ -60,8 +66,6 @@ export function RideSelectionScreen({navigation, route}: Props) {
               <View style={styles.originDot} />
             </View>
           </Marker>
-
-          {/* Destination marker */}
           <Marker
             coordinate={{
               latitude: destination.latitude,
@@ -69,8 +73,6 @@ export function RideSelectionScreen({navigation, route}: Props) {
             }}>
             <View style={styles.destMarker} />
           </Marker>
-
-          {/* Route line */}
           <Polyline
             coordinates={routeCoordinates}
             strokeColor={Colors.black}
@@ -80,12 +82,29 @@ export function RideSelectionScreen({navigation, route}: Props) {
       </View>
 
       {/* Bottom card */}
-      <View style={[styles.bottomCard, Shadows.card]}>
+      <View style={styles.bottomCard}>
         <View style={styles.handle} />
-        <UbertText variant="heading" style={{marginBottom: Spacing.sm}}>
-          Choose a ride
-        </UbertText>
-        <Divider />
+
+        {/* Trip summary row */}
+        <View style={styles.tripRow}>
+          <View style={styles.tripDots}>
+            <View style={[styles.tripDot, {backgroundColor: Colors.accent}]} />
+            <View style={styles.tripLine} />
+            <View style={[styles.tripDot, {backgroundColor: Colors.black}]} />
+          </View>
+          <View style={styles.tripAddresses}>
+            <Text style={styles.tripAddr} numberOfLines={1}>
+              {origin.address}
+            </Text>
+            <Text style={[styles.tripAddr, {marginTop: 14}]} numberOfLines={1}>
+              {destination.name}
+            </Text>
+          </View>
+        </View>
+
+        <Divider style={{marginVertical: 12}} />
+
+        <Text style={styles.sectionTitle}>Choose a ride</Text>
 
         <ScrollView
           style={styles.rideList}
@@ -100,11 +119,23 @@ export function RideSelectionScreen({navigation, route}: Props) {
           ))}
         </ScrollView>
 
+        <Divider />
+
+        {/* Payment row */}
+        <TouchableOpacity style={styles.paymentRow}>
+          <View style={styles.paymentIcon}>
+            <Icon name="credit-card" size={18} color={Colors.white} />
+          </View>
+          <Text style={styles.paymentText}>Visa •••• 4242</Text>
+          <Icon name="chevron-right" size={20} color={Colors.gray500} />
+        </TouchableOpacity>
+
+        {/* CTA button */}
         <View style={[styles.footer, {paddingBottom: insets.bottom + 8}]}>
           <UbertButton
             title={
               selectedRide
-                ? `Choose ${selectedRide.name} \u2014 ${selectedRide.price}`
+                ? `Choose ${selectedRide.name} — ${selectedRide.price}`
                 : 'Choose a ride'
             }
             onPress={handleChooseRide}
@@ -121,8 +152,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.gray100,
   },
+  backBtn: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   mapContainer: {
-    height: '42%',
+    height: '38%',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -157,24 +204,79 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     marginTop: -16,
-    paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.md,
+    paddingHorizontal: 16,
+    paddingTop: 10,
   },
   handle: {
-    width: 40,
+    width: 32,
     height: 4,
     borderRadius: 2,
     backgroundColor: Colors.gray300,
     alignSelf: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: 14,
+  },
+
+  // Trip summary
+  tripRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tripDots: {
+    alignItems: 'center',
+    width: 16,
+  },
+  tripDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  tripLine: {
+    width: 2,
+    height: 14,
+    backgroundColor: Colors.gray300,
+  },
+  tripAddresses: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  tripAddr: {
+    fontSize: 14,
+    color: Colors.gray700,
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.black,
+    marginBottom: 4,
   },
   rideList: {
     flex: 1,
-    marginTop: Spacing.sm,
   },
+
+  // Payment
+  paymentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+  },
+  paymentIcon: {
+    width: 32,
+    height: 20,
+    borderRadius: 4,
+    backgroundColor: '#1A56DB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paymentText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.black,
+    marginLeft: 10,
+  },
+
   footer: {
-    paddingTop: Spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Colors.gray200,
+    paddingTop: 8,
   },
 });
