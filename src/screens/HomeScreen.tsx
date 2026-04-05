@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
-  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -134,13 +133,13 @@ export function HomeScreen({navigation}: Props) {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.cardsRow}>
           <SuggestionCard
-            emoji="🚗"
+            icon="directions-car"
             label="Ride"
             onPress={handleSearchPress}
           />
-          <SuggestionCard emoji="📦" label="Package" />
-          <SuggestionCard emoji="📅" label="Reserve" />
-          <SuggestionCard emoji="🔑" label="Rent" />
+          <SuggestionCard icon="inventory-2" label="Package" />
+          <SuggestionCard icon="event-available" label="Reserve" />
+          <SuggestionCard icon="vpn-key" label="Rent" />
         </ScrollView>
 
         {/* Ways to plan */}
@@ -198,18 +197,18 @@ export function HomeScreen({navigation}: Props) {
 }
 
 function SuggestionCard({
-  emoji,
+  icon,
   label,
   onPress,
 }: {
-  emoji: string;
+  icon: string;
   label: string;
   onPress?: () => void;
 }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.cardImageWrap}>
-        <Text style={styles.cardEmoji}>{emoji}</Text>
+        <Icon name={icon} size={32} color="#333" />
       </View>
       <Text style={styles.cardLabel}>{label}</Text>
     </TouchableOpacity>
@@ -405,9 +404,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  cardEmoji: {
-    fontSize: 36,
   },
   cardLabel: {
     fontSize: 14,

@@ -29,7 +29,7 @@ export const rideOptions: RideOption[] = [
     price: '$15.82',
     capacity: 4,
     imageUrl:
-      'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberComfort_v1.png',
+      'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/Select_v1.png',
   },
   {
     id: 'uberxl',
