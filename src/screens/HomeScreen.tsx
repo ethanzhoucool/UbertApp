@@ -25,6 +25,11 @@ const suggestionIcons = {
   rent: require('../assets/icons/rent.png'),
 };
 
+const tabIcons = {
+  rides: require('../assets/icons/rides-tab.png'),
+  delivery: require('../assets/icons/delivery-tab.png'),
+};
+
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };
@@ -59,7 +64,7 @@ export function HomeScreen({navigation}: Props) {
           <TouchableOpacity
             style={[styles.tab, activeTab === 'rides' && styles.tabActive]}
             onPress={() => setActiveTab('rides')}>
-            <Text style={styles.tabEmoji}>🚘</Text>
+            <Image source={tabIcons.rides} style={styles.tabIcon} resizeMode="contain" />
             <Text
               style={[
                 styles.tabLabel,
@@ -73,7 +78,7 @@ export function HomeScreen({navigation}: Props) {
           <TouchableOpacity
             style={[styles.tab, activeTab === 'delivery' && styles.tabActive]}
             onPress={() => setActiveTab('delivery')}>
-            <Text style={styles.tabEmoji}>🍽️</Text>
+            <Image source={tabIcons.delivery} style={styles.tabIcon} resizeMode="contain" />
             <Text
               style={[
                 styles.tabLabel,
@@ -272,8 +277,9 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tabActive: {},
-  tabEmoji: {
-    fontSize: 22,
+  tabIcon: {
+    width: 30,
+    height: 20,
   },
   tabLabel: {
     fontSize: 18,
@@ -402,8 +408,8 @@ const styles = StyleSheet.create({
   },
   cardImg: {
     width: 92,
-    height: 80,
-    borderRadius: 14,
+    height: 92,
+    borderRadius: 16,
   },
   cardLabel: {
     fontSize: 14,
