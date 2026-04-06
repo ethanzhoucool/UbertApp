@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
-  Image,
+
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -51,11 +51,7 @@ export function HomeScreen({navigation}: Props) {
           <TouchableOpacity
             style={[styles.tab, activeTab === 'rides' && styles.tabActive]}
             onPress={() => setActiveTab('rides')}>
-            <Image
-              source={{uri: 'https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberX_v1.png'}}
-              style={styles.tabIcon}
-              resizeMode="contain"
-            />
+            <Text style={styles.tabEmoji}>🚘</Text>
             <Text
               style={[
                 styles.tabLabel,
@@ -69,7 +65,7 @@ export function HomeScreen({navigation}: Props) {
           <TouchableOpacity
             style={[styles.tab, activeTab === 'delivery' && styles.tabActive]}
             onPress={() => setActiveTab('delivery')}>
-            <Icon name="restaurant" size={22} color={activeTab === 'delivery' ? Colors.black : Colors.gray500} />
+            <Text style={styles.tabEmoji}>🍽️</Text>
             <Text
               style={[
                 styles.tabLabel,
@@ -137,23 +133,10 @@ export function HomeScreen({navigation}: Props) {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.cardsRow}>
-          <SuggestionCard
-            imageUrl="https://d1a3f4spazzrp4.cloudfront.net/car-types/haloProductImages/v1.1/UberX_v1.png"
-            label="Ride"
-            onPress={handleSearchPress}
-          />
-          <SuggestionCard
-            fallbackIcon="inventory-2"
-            label="Package"
-          />
-          <SuggestionCard
-            fallbackIcon="event-available"
-            label="Reserve"
-          />
-          <SuggestionCard
-            fallbackIcon="vpn-key"
-            label="Rent"
-          />
+          <SuggestionCard emoji="🚗" label="Ride" onPress={handleSearchPress} />
+          <SuggestionCard emoji="📦" label="Package" />
+          <SuggestionCard emoji="📅" label="Reserve" />
+          <SuggestionCard emoji="🔑" label="Rent" />
         </ScrollView>
 
         {/* Ways to plan */}
@@ -211,28 +194,18 @@ export function HomeScreen({navigation}: Props) {
 }
 
 function SuggestionCard({
-  imageUrl,
-  fallbackIcon,
+  emoji,
   label,
   onPress,
 }: {
-  imageUrl?: string;
-  fallbackIcon?: string;
+  emoji: string;
   label: string;
   onPress?: () => void;
 }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.cardImageWrap}>
-        {imageUrl ? (
-          <Image
-            source={{uri: imageUrl}}
-            style={styles.cardImage}
-            resizeMode="contain"
-          />
-        ) : (
-          <Icon name={fallbackIcon || 'help-outline'} size={32} color="#333" />
-        )}
+        <Text style={styles.cardEmoji}>{emoji}</Text>
       </View>
       <Text style={styles.cardLabel}>{label}</Text>
     </TouchableOpacity>
@@ -293,9 +266,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tabActive: {},
-  tabIcon: {
-    width: 28,
-    height: 22,
+  tabEmoji: {
+    fontSize: 22,
   },
   tabLabel: {
     fontSize: 18,
@@ -430,9 +402,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cardImage: {
-    width: 56,
-    height: 56,
+  cardEmoji: {
+    fontSize: 42,
   },
   cardLabel: {
     fontSize: 14,
