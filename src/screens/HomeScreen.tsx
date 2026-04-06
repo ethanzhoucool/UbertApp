@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
-
+  Image,
+  ImageSourcePropType,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -16,6 +17,13 @@ import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {recentPlaces, suggestedPlaces, Place} from '../data/mockPlaces';
 import {Colors} from '../theme';
+
+const suggestionIcons = {
+  ride: require('../assets/icons/ride.png'),
+  package: require('../assets/icons/package.png'),
+  reserve: require('../assets/icons/reserve.png'),
+  rent: require('../assets/icons/rent.png'),
+};
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
@@ -133,10 +141,10 @@ export function HomeScreen({navigation}: Props) {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.cardsRow}>
-          <SuggestionCard emoji="🚗" label="Ride" onPress={handleSearchPress} />
-          <SuggestionCard emoji="📦" label="Package" />
-          <SuggestionCard emoji="📅" label="Reserve" />
-          <SuggestionCard emoji="🔑" label="Rent" />
+          <SuggestionCard image={suggestionIcons.ride} label="Ride" onPress={handleSearchPress} />
+          <SuggestionCard image={suggestionIcons.package} label="Package" />
+          <SuggestionCard image={suggestionIcons.reserve} label="Reserve" />
+          <SuggestionCard image={suggestionIcons.rent} label="Rent" />
         </ScrollView>
 
         {/* Ways to plan */}
@@ -194,19 +202,17 @@ export function HomeScreen({navigation}: Props) {
 }
 
 function SuggestionCard({
-  emoji,
+  image,
   label,
   onPress,
 }: {
-  emoji: string;
+  image: ImageSourcePropType;
   label: string;
   onPress?: () => void;
 }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.cardImageWrap}>
-        <Text style={styles.cardEmoji}>{emoji}</Text>
-      </View>
+      <Image source={image} style={styles.cardImg} resizeMode="cover" />
       <Text style={styles.cardLabel}>{label}</Text>
     </TouchableOpacity>
   );
@@ -394,16 +400,10 @@ const styles = StyleSheet.create({
     width: 100,
     alignItems: 'center',
   },
-  cardImageWrap: {
+  cardImg: {
     width: 92,
     height: 80,
     borderRadius: 14,
-    backgroundColor: '#F5F5F5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardEmoji: {
-    fontSize: 42,
   },
   cardLabel: {
     fontSize: 14,
