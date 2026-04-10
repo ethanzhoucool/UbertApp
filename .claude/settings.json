@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/ethanzhou/.claude/**)",
+      "Bash(mkdir -p ~/.claude/agents)"
+    ],
+    "additionalDirectories": [
+      "/Users/ethanzhou/.claude/agents"
+    ]
+  }
+}

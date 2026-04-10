@@ -16,22 +16,55 @@ import {UbertButton} from '../components/common/UbertButton';
 import {StarRating} from '../components/common/StarRating';
 import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
-import {Colors, Spacing} from '../theme';
+import {useTrip} from '../store/TripContext';
+import {Colors} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'TripComplete'>;
   route: RouteProp<RootStackParamList, 'TripComplete'>;
 };
 
+const COMPLIMENTS = [
+  {key: 'chat', icon: 'chat-bubble-outline', label: 'Good conversation'},
+  {key: 'nav', icon: 'navigation', label: 'Expert driving'},
+  {key: 'music', icon: 'music-note', label: 'Great music'},
+  {key: 'clean', icon: 'clean-hands', label: 'Clean vehicle'},
+];
+
 export function TripCompleteScreen({navigation, route}: Props) {
   const insets = useSafeAreaInsets();
   const {driver, fare, duration} = route.params;
+  const {state, dispatch} = useTrip();
   const [rating, setRating] = useState(0);
   const [selectedTip, setSelectedTip] = useState<string | null>(null);
+  const [selectedCompliments, setSelectedCompliments] = useState<string[]>([]);
 
   const tipOptions = ['$1', '$2', '$5', 'Other'];
 
+  const toggleCompliment = (label: string) => {
+    setSelectedCompliments(prev =>
+      prev.includes(label) ? prev.filter(c => c !== label) : [...prev, label],
+    );
+  };
+
   const handleDone = () => {
+    if (state.destination && state.selectedRide) {
+      dispatch({
+        type: 'COMPLETE_TRIP',
+        payload: {
+          id: `trip-${Date.now()}`,
+          destination: state.destination,
+          driver,
+          rideOption: state.selectedRide,
+          fare,
+          duration,
+          date: new Date(),
+          rating,
+          compliments: selectedCompliments,
+        },
+      });
+    }
+    dispatch({type: 'RESET'});
     navigation.reset({
       index: 0,
       routes: [{name: 'Home'}],
@@ -54,9 +87,6 @@ export function TripCompleteScreen({navigation, route}: Props) {
         </View>
 
         <Text style={styles.title}>You've arrived</Text>
-        <Text style={styles.subtitle}>
-          Hope you had a great ride!
-        </Text>
 
         {/* Trip stats */}
         <View style={styles.statsRow}>
@@ -73,7 +103,7 @@ export function TripCompleteScreen({navigation, route}: Props) {
         <View style={styles.driverSection}>
           <Image source={{uri: driver.avatarUrl}} style={styles.avatar} />
           <Text style={styles.rateQuestion}>
-            How was your trip with {driver.name}?
+            Rate your trip with {driver.name}
           </Text>
           <StarRating rating={rating} onRate={setRating} interactive size={40} />
         </View>
@@ -85,10 +115,15 @@ export function TripCompleteScreen({navigation, route}: Props) {
             {/* Compliments */}
             <Text style={styles.sectionTitle}>Compliments</Text>
             <View style={styles.complimentsRow}>
-              <Compliment icon="chat-bubble-outline" label="Great chat" />
-              <Compliment icon="navigation" label="Expert navigation" />
-              <Compliment icon="music-note" label="Great music" />
-              <Compliment icon="clean-hands" label="Clean car" />
+              {COMPLIMENTS.map(c => (
+                <Compliment
+                  key={c.key}
+                  icon={c.icon}
+                  label={c.label}
+                  selected={selectedCompliments.includes(c.label)}
+                  onPress={() => toggleCompliment(c.label)}
+                />
+              ))}
             </View>
           </>
         )}
@@ -96,9 +131,9 @@ export function TripCompleteScreen({navigation, route}: Props) {
         <Divider style={{marginVertical: 20}} />
 
         {/* Tip */}
-        <Text style={styles.sectionTitle}>Add a tip for {driver.name}</Text>
+        <Text style={styles.sectionTitle}>Tip {driver.name}?</Text>
         <Text style={styles.tipSubtext}>
-          Tips go directly to your driver. You can also tip later.
+          Tips go directly to {driver.name}.
         </Text>
         <View style={styles.tipRow}>
           {tipOptions.map(tip => (
@@ -166,11 +201,34 @@ function StatItem({
   );
 }
 
-function Compliment({icon, label}: {icon: string; label: string}) {
+function Compliment({
+  icon,
+  label,
+  selected,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.complimentChip}>
-      <Icon name={icon} size={16} color={Colors.gray700} />
-      <Text style={styles.complimentText}>{label}</Text>
+    <TouchableOpacity
+      style={[styles.complimentChip, selected && styles.complimentChipActive]}
+      onPress={onPress}
+      activeOpacity={0.7}>
+      <Icon
+        name={icon}
+        size={16}
+        color={selected ? Colors.white : Colors.gray700}
+      />
+      <Text
+        style={[
+          styles.complimentText,
+          selected && styles.complimentTextActive,
+        ]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -213,12 +271,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.black,
     textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 15,
-    color: Colors.gray500,
-    textAlign: 'center',
-    marginTop: 6,
   },
 
   // Stats
@@ -293,9 +345,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     gap: 6,
   },
+  complimentChipActive: {
+    backgroundColor: Colors.black,
+    borderColor: Colors.black,
+  },
   complimentText: {
     fontSize: 13,
     color: Colors.gray700,
+  },
+  complimentTextActive: {
+    color: Colors.white,
   },
 
   // Tips

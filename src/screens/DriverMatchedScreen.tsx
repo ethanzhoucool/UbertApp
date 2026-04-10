@@ -7,10 +7,17 @@ import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {UbertButton} from '../components/common/UbertButton';
 import {Divider} from '../components/common/Divider';
+import {Toast} from '../components/common/Toast';
+import {MessageSheet} from '../components/sheets/MessageSheet';
+import {CallingSheet} from '../components/sheets/CallingSheet';
+import {ShareTripSheet} from '../components/sheets/ShareTripSheet';
+import {SafetySheet} from '../components/sheets/SafetySheet';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {driverApproachCoords} from '../data/mockRouteCoords';
 import {Colors} from '../theme';
+
+type ActiveSheet = 'message' | 'call' | 'share' | 'safety' | null;
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'DriverMatched'>;
@@ -23,6 +30,14 @@ export function DriverMatchedScreen({navigation, route}: Props) {
   const {state} = useTrip();
   const [driverIndex, setDriverIndex] = useState(0);
   const [eta, setEta] = useState(3);
+  const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+  };
 
   const driverCoord =
     driverApproachCoords[driverIndex] ||
@@ -152,10 +167,10 @@ export function DriverMatchedScreen({navigation, route}: Props) {
 
         {/* Action buttons */}
         <View style={styles.actionsRow}>
-          <ActionCircle icon="chat-bubble-outline" label="Message" />
-          <ActionCircle icon="phone" label="Call" />
-          <ActionCircle icon="share" label="Share trip" />
-          <ActionCircle icon="shield" label="Safety" />
+          <ActionCircle icon="chat-bubble-outline" label="Message" onPress={() => setActiveSheet('message')} />
+          <ActionCircle icon="phone" label="Call" onPress={() => setActiveSheet('call')} />
+          <ActionCircle icon="share" label="Share" onPress={() => setActiveSheet('share')} />
+          <ActionCircle icon="shield" label="Safety" onPress={() => setActiveSheet('safety')} />
         </View>
 
         {arrived && (
@@ -167,13 +182,48 @@ export function DriverMatchedScreen({navigation, route}: Props) {
           </View>
         )}
       </View>
+
+      {/* Sheets */}
+      <MessageSheet
+        visible={activeSheet === 'message'}
+        onClose={() => setActiveSheet(null)}
+        driver={driver}
+      />
+      <CallingSheet
+        visible={activeSheet === 'call'}
+        onClose={() => setActiveSheet(null)}
+        driver={driver}
+      />
+      <ShareTripSheet
+        visible={activeSheet === 'share'}
+        onClose={() => setActiveSheet(null)}
+        onCopyLink={() => showToast('Trip link copied')}
+      />
+      <SafetySheet
+        visible={activeSheet === 'safety'}
+        onClose={() => setActiveSheet(null)}
+      />
+
+      <Toast
+        message={toastMsg}
+        visible={toastVisible}
+        onHide={() => setToastVisible(false)}
+      />
     </View>
   );
 }
 
-function ActionCircle({icon, label}: {icon: string; label: string}) {
+function ActionCircle({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.actionBtn}>
+    <TouchableOpacity style={styles.actionBtn} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.actionCircle}>
         <Icon name={icon} size={20} color={Colors.black} />
       </View>

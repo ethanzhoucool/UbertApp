@@ -12,11 +12,33 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {BottomTabBar} from '../components/common/BottomTabBar';
+import {BottomTabBar, TabKey} from '../components/common/BottomTabBar';
+import {Toast} from '../components/common/Toast';
+import {ServicesSheet} from '../components/sheets/ServicesSheet';
+import {ActivitySheet} from '../components/sheets/ActivitySheet';
+import {AccountSheet} from '../components/sheets/AccountSheet';
+import {SchedulePickerSheet} from '../components/sheets/SchedulePickerSheet';
+import {PromoSheet} from '../components/sheets/PromoSheet';
+import {ExplorePromoSheet} from '../components/sheets/ExplorePromoSheet';
+import {ComingSoonSheet} from '../components/sheets/ComingSoonSheet';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {recentPlaces, suggestedPlaces, Place} from '../data/mockPlaces';
+import {Service} from '../data/mockServices';
 import {Colors} from '../theme';
+
+type Sheet =
+  | 'services'
+  | 'activity'
+  | 'account'
+  | 'schedule'
+  | 'see-all'
+  | 'reserve-promo'
+  | 'explore-promo'
+  | 'coming-soon-package'
+  | 'coming-soon-reserve'
+  | 'coming-soon-rent'
+  | null;
 
 const suggestionIcons = {
   ride: require('../assets/icons/ride.png'),
@@ -38,6 +60,15 @@ export function HomeScreen({navigation}: Props) {
   const insets = useSafeAreaInsets();
   const {dispatch} = useTrip();
   const [activeTab, setActiveTab] = useState<'rides' | 'delivery'>('rides');
+  const [sheet, setSheet] = useState<Sheet>(null);
+  const [scheduleLabel, setScheduleLabel] = useState<string>('Now');
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+  };
 
   const handleSearchPress = useCallback(() => {
     navigation.navigate('Search');
@@ -50,6 +81,31 @@ export function HomeScreen({navigation}: Props) {
     },
     [navigation, dispatch],
   );
+
+  const handleTabPress = (tab: TabKey) => {
+    if (tab === 'home') {return;}
+    if (tab === 'services') {setSheet('services');}
+    if (tab === 'activity') {setSheet('activity');}
+    if (tab === 'account') {setSheet('account');}
+  };
+
+  const handleServiceSelect = (service: Service) => {
+    setSheet(null);
+    if (service.id === 'ride') {
+      handleSearchPress();
+    } else {
+      // Map common services to coming soon sheets
+      if (service.id === 'package') {setSheet('coming-soon-package');}
+      else if (service.id === 'reserve') {setSheet('coming-soon-reserve');}
+      else if (service.id === 'rent') {setSheet('coming-soon-rent');}
+      else {showToast(`${service.name} is coming soon`);}
+    }
+  };
+
+  const handleScheduleSelect = (date: Date | null, label: string) => {
+    dispatch({type: 'SET_SCHEDULE', payload: date});
+    setScheduleLabel(label === 'Now' ? 'Now' : label);
+  };
 
   return (
     <View style={[styles.container, {paddingTop: insets.top}]}>
@@ -91,18 +147,23 @@ export function HomeScreen({navigation}: Props) {
         </View>
 
         {/* Search bar */}
-        <TouchableOpacity
-          style={styles.searchBar}
-          onPress={handleSearchPress}
-          activeOpacity={0.85}>
-          <Icon name="search" size={20} color={Colors.gray700} />
-          <Text style={styles.searchText}>Where to?</Text>
-          <View style={styles.nowPill}>
+        <View style={styles.searchBar}>
+          <TouchableOpacity
+            style={styles.searchInner}
+            onPress={handleSearchPress}
+            activeOpacity={0.85}>
+            <Icon name="search" size={20} color={Colors.gray700} />
+            <Text style={styles.searchText}>Where to?</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.nowPill}
+            onPress={() => setSheet('schedule')}
+            activeOpacity={0.7}>
             <Icon name="schedule" size={14} color={Colors.black} />
-            <Text style={styles.nowLabel}>Now</Text>
+            <Text style={styles.nowLabel}>{scheduleLabel}</Text>
             <Icon name="keyboard-arrow-down" size={16} color={Colors.black} />
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
 
         {/* Saved places */}
         <TouchableOpacity
@@ -137,7 +198,7 @@ export function HomeScreen({navigation}: Props) {
         {/* Suggestions */}
         <View style={styles.suggestionsHeader}>
           <Text style={styles.sectionTitle}>Suggestions</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setSheet('see-all')} activeOpacity={0.6}>
             <Text style={styles.seeAll}>See all</Text>
           </TouchableOpacity>
         </View>
@@ -146,10 +207,26 @@ export function HomeScreen({navigation}: Props) {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.cardsRow}>
-          <SuggestionCard image={suggestionIcons.ride} label="Ride" onPress={handleSearchPress} />
-          <SuggestionCard image={suggestionIcons.package} label="Package" />
-          <SuggestionCard image={suggestionIcons.reserve} label="Reserve" />
-          <SuggestionCard image={suggestionIcons.rent} label="Rent" />
+          <SuggestionCard
+            image={suggestionIcons.ride}
+            label="Ride"
+            onPress={handleSearchPress}
+          />
+          <SuggestionCard
+            image={suggestionIcons.package}
+            label="Package"
+            onPress={() => setSheet('coming-soon-package')}
+          />
+          <SuggestionCard
+            image={suggestionIcons.reserve}
+            label="Reserve"
+            onPress={() => setSheet('coming-soon-reserve')}
+          />
+          <SuggestionCard
+            image={suggestionIcons.rent}
+            label="Rent"
+            onPress={() => setSheet('coming-soon-rent')}
+          />
         </ScrollView>
 
         {/* Ways to plan */}
@@ -166,12 +243,14 @@ export function HomeScreen({navigation}: Props) {
             subtitle="Plan ahead for your trip"
             color="#E8F5E9"
             icon="event-available"
+            onPress={() => setSheet('reserve-promo')}
           />
           <PromoCard
             title="Explore locally"
             subtitle="Find popular destinations"
             color="#F3E5F5"
             icon="explore"
+            onPress={() => setSheet('explore-promo')}
           />
         </ScrollView>
 
@@ -201,7 +280,71 @@ export function HomeScreen({navigation}: Props) {
         <View style={{height: 20}} />
       </ScrollView>
 
-      <BottomTabBar />
+      <BottomTabBar onTabPress={handleTabPress} activeTab="home" />
+
+      {/* Sheets */}
+      <ServicesSheet
+        visible={sheet === 'services' || sheet === 'see-all'}
+        onClose={() => setSheet(null)}
+        onSelectService={handleServiceSelect}
+        title={sheet === 'see-all' ? 'All services' : 'Services'}
+      />
+      <ActivitySheet
+        visible={sheet === 'activity'}
+        onClose={() => setSheet(null)}
+      />
+      <AccountSheet
+        visible={sheet === 'account'}
+        onClose={() => setSheet(null)}
+      />
+      <SchedulePickerSheet
+        visible={sheet === 'schedule'}
+        onClose={() => setSheet(null)}
+        onSelect={handleScheduleSelect}
+      />
+      <PromoSheet
+        visible={sheet === 'reserve-promo'}
+        onClose={() => setSheet(null)}
+        onScheduleRide={() => setSheet('schedule')}
+      />
+      <ExplorePromoSheet
+        visible={sheet === 'explore-promo'}
+        onClose={() => setSheet(null)}
+        onSelectPlace={handlePlacePress}
+      />
+      <ComingSoonSheet
+        visible={sheet === 'coming-soon-package'}
+        onClose={() => setSheet(null)}
+        title="Send a package"
+        description="Same-day delivery anywhere in the city. Drivers pick up your package and drop it off where you choose."
+        icon="inventory-2"
+        iconBg="#FFF3E0"
+        onNotify={() => showToast("We'll notify you when Package launches")}
+      />
+      <ComingSoonSheet
+        visible={sheet === 'coming-soon-reserve'}
+        onClose={() => setSheet(null)}
+        title="Reserve a ride"
+        description="Book up to 90 days in advance. Lock in your pickup time and avoid the wait."
+        icon="event-available"
+        iconBg="#E8F5E9"
+        onNotify={() => showToast("We'll notify you when Reserve is available")}
+      />
+      <ComingSoonSheet
+        visible={sheet === 'coming-soon-rent'}
+        onClose={() => setSheet(null)}
+        title="Rent a car"
+        description="Daily and hourly rentals delivered to your door. Perfect for road trips and errands."
+        icon="vpn-key"
+        iconBg="#E3F2FD"
+        onNotify={() => showToast("We'll notify you when Rentals are live")}
+      />
+
+      <Toast
+        message={toastMsg}
+        visible={toastVisible}
+        onHide={() => setToastVisible(false)}
+      />
     </View>
   );
 }
@@ -228,14 +371,19 @@ function PromoCard({
   subtitle,
   color,
   icon,
+  onPress,
 }: {
   title: string;
   subtitle: string;
   color: string;
   icon: string;
+  onPress: () => void;
 }) {
   return (
-    <TouchableOpacity style={[styles.promoCard, {backgroundColor: color}]} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={[styles.promoCard, {backgroundColor: color}]}
+      onPress={onPress}
+      activeOpacity={0.8}>
       <View style={styles.promoContent}>
         <Text style={styles.promoTitle}>{title}</Text>
         <Text style={styles.promoSub}>{subtitle}</Text>
@@ -311,6 +459,12 @@ const styles = StyleSheet.create({
     height: 50,
     paddingLeft: 16,
     paddingRight: 6,
+  },
+  searchInner: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
   },
   searchText: {
     flex: 1,

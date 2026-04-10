@@ -30,7 +30,7 @@ export function RideOptionCard({option, selected, onSelect}: Props) {
           </View>
         </View>
         <Text style={styles.eta}>
-          {option.eta} min away
+          Arriving in {option.eta} min
         </Text>
         <Text style={styles.desc} numberOfLines={1}>
           {option.description}

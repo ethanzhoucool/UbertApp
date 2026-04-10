@@ -6,6 +6,10 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Divider} from '../components/common/Divider';
+import {Toast} from '../components/common/Toast';
+import {ShareTripSheet} from '../components/sheets/ShareTripSheet';
+import {CallingSheet} from '../components/sheets/CallingSheet';
+import {SafetySheet} from '../components/sheets/SafetySheet';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {routeCoordinates} from '../data/mockRouteCoords';
@@ -17,6 +21,8 @@ type Props = {
   route: RouteProp<RootStackParamList, 'TripInProgress'>;
 };
 
+type ActiveSheet = 'share' | 'call' | 'safety' | null;
+
 const TRIP_DURATION = 10000;
 
 export function TripInProgressScreen({navigation, route}: Props) {
@@ -26,6 +32,14 @@ export function TripInProgressScreen({navigation, route}: Props) {
   const [carIndex, setCarIndex] = useState(0);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const [minutesLeft, setMinutesLeft] = useState(8);
+  const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+  };
 
   const carCoord =
     routeCoordinates[carIndex] ||
@@ -130,7 +144,7 @@ export function TripInProgressScreen({navigation, route}: Props) {
       <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 12}]}>
         <View style={styles.handle} />
 
-        <Text style={styles.heading}>On the way to your destination</Text>
+        <Text style={styles.heading}>Heading to your destination</Text>
         <Text style={styles.sub}>
           {driver.name} · {driver.carColor} {driver.carModel}
         </Text>
@@ -151,18 +165,48 @@ export function TripInProgressScreen({navigation, route}: Props) {
 
         {/* Action buttons */}
         <View style={styles.actionsRow}>
-          <ActionBtn icon="share" label="Share trip" />
-          <ActionBtn icon="phone" label="Contact" />
-          <ActionBtn icon="shield" label="Safety" />
+          <ActionBtn icon="share" label="Share" onPress={() => setActiveSheet('share')} />
+          <ActionBtn icon="phone" label="Call" onPress={() => setActiveSheet('call')} />
+          <ActionBtn icon="shield" label="Safety" onPress={() => setActiveSheet('safety')} />
         </View>
       </View>
+
+      {/* Sheets */}
+      <ShareTripSheet
+        visible={activeSheet === 'share'}
+        onClose={() => setActiveSheet(null)}
+        onCopyLink={() => showToast('Trip link copied')}
+      />
+      <CallingSheet
+        visible={activeSheet === 'call'}
+        onClose={() => setActiveSheet(null)}
+        driver={driver}
+      />
+      <SafetySheet
+        visible={activeSheet === 'safety'}
+        onClose={() => setActiveSheet(null)}
+      />
+
+      <Toast
+        message={toastMsg}
+        visible={toastVisible}
+        onHide={() => setToastVisible(false)}
+      />
     </View>
   );
 }
 
-function ActionBtn({icon, label}: {icon: string; label: string}) {
+function ActionBtn({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.actionItem}>
+    <TouchableOpacity style={styles.actionItem} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.actionCircle}>
         <Icon name={icon} size={20} color={Colors.black} />
       </View>

@@ -8,11 +8,12 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {UbertButton} from '../components/common/UbertButton';
 import {Divider} from '../components/common/Divider';
 import {RideOptionCard} from '../components/ride/RideOptionCard';
+import {PaymentSheet} from '../components/sheets/PaymentSheet';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {rideOptions, RideOption} from '../data/mockRideOptions';
 import {generateRoute} from '../utils/generateRoute';
-import {Colors, Spacing} from '../theme';
+import {Colors} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'RideSelection'>;
@@ -24,6 +25,7 @@ export function RideSelectionScreen({navigation, route}: Props) {
   const {state, dispatch} = useTrip();
   const {destination} = route.params;
   const [selectedRide, setSelectedRide] = useState<RideOption | null>(null);
+  const [paymentOpen, setPaymentOpen] = useState(false);
 
   const origin = state.origin;
 
@@ -109,7 +111,7 @@ export function RideSelectionScreen({navigation, route}: Props) {
 
         <Divider style={{marginVertical: 12}} />
 
-        <Text style={styles.sectionTitle}>Choose a ride</Text>
+        <Text style={styles.sectionTitle}>Select a ride</Text>
 
         <ScrollView
           style={styles.rideList}
@@ -127,11 +129,26 @@ export function RideSelectionScreen({navigation, route}: Props) {
         <Divider />
 
         {/* Payment row */}
-        <TouchableOpacity style={styles.paymentRow}>
-          <View style={styles.paymentIcon}>
-            <Icon name="credit-card" size={18} color={Colors.white} />
+        <TouchableOpacity
+          style={styles.paymentRow}
+          onPress={() => setPaymentOpen(true)}
+          activeOpacity={0.7}>
+          <View style={[styles.paymentIcon, {backgroundColor: state.paymentMethod.iconBg}]}>
+            <Icon
+              name={
+                state.paymentMethod.type === 'cash'
+                  ? 'attach-money'
+                  : state.paymentMethod.type === 'apple-pay'
+                    ? 'phone-iphone'
+                    : 'credit-card'
+              }
+              size={18}
+              color={Colors.white}
+            />
           </View>
-          <Text style={styles.paymentText}>Visa •••• 4242</Text>
+          <Text style={styles.paymentText}>
+            {state.paymentMethod.label} {state.paymentMethod.detail}
+          </Text>
           <Icon name="chevron-right" size={20} color={Colors.gray500} />
         </TouchableOpacity>
 
@@ -140,14 +157,16 @@ export function RideSelectionScreen({navigation, route}: Props) {
           <UbertButton
             title={
               selectedRide
-                ? `Choose ${selectedRide.name} — ${selectedRide.price}`
-                : 'Choose a ride'
+                ? `Confirm ${selectedRide.name} — ${selectedRide.price}`
+                : 'Select a ride to continue'
             }
             onPress={handleChooseRide}
             disabled={!selectedRide}
           />
         </View>
       </View>
+
+      <PaymentSheet visible={paymentOpen} onClose={() => setPaymentOpen(false)} />
     </View>
   );
 }
