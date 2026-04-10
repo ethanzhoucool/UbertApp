@@ -56,14 +56,25 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };
 
+function formatScheduleLabel(date: Date | null): string {
+  if (!date) {return 'Now';}
+  const diffMins = Math.round((date.getTime() - Date.now()) / 60000);
+  if (diffMins <= 0) {return 'Now';}
+  if (diffMins < 60) {return `In ${diffMins} min`;}
+  const diffHours = Math.round(diffMins / 60);
+  if (diffHours < 24) {return `In ${diffHours} hr`;}
+  return date.toLocaleDateString('en-US', {weekday: 'short', hour: 'numeric', minute: '2-digit'});
+}
+
 export function HomeScreen({navigation}: Props) {
   const insets = useSafeAreaInsets();
-  const {dispatch} = useTrip();
+  const {state, dispatch} = useTrip();
   const [activeTab, setActiveTab] = useState<'rides' | 'delivery'>('rides');
   const [sheet, setSheet] = useState<Sheet>(null);
-  const [scheduleLabel, setScheduleLabel] = useState<string>('Now');
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
+
+  const scheduleLabel = formatScheduleLabel(state.scheduledTime);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -102,9 +113,8 @@ export function HomeScreen({navigation}: Props) {
     }
   };
 
-  const handleScheduleSelect = (date: Date | null, label: string) => {
+  const handleScheduleSelect = (date: Date | null) => {
     dispatch({type: 'SET_SCHEDULE', payload: date});
-    setScheduleLabel(label === 'Now' ? 'Now' : label);
   };
 
   return (

@@ -8,7 +8,7 @@ import {Colors} from '../../theme';
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onSelect: (date: Date | null, label: string) => void;
+  onSelect: (date: Date | null) => void;
 }
 
 interface Slot {
@@ -48,10 +48,9 @@ export function SchedulePickerSheet({visible, onClose, onSelect}: Props) {
     const slot = slots.find(s => s.key === selected);
     if (!slot) {return;}
     if (slot.offsetMs === null) {
-      onSelect(null, 'Now');
+      onSelect(null);
     } else {
-      const date = new Date(Date.now() + slot.offsetMs);
-      onSelect(date, slot.label);
+      onSelect(new Date(Date.now() + slot.offsetMs));
     }
     onClose();
   };
