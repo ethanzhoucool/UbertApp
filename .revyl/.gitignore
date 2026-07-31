@@ -17,3 +17,6 @@ shell-init.sh
 
 # MCP session artifacts (screenshots, etc.)
 mcp/
+
+# Dev loop runtime
+dev-sessions/
