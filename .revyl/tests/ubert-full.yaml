@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: dde495d4-22cf-4dee-a88a-b7c8e7351d61
+    remote_version: 2
+    local_version: 2
+    last_synced_at: "2026-05-20T17:17:07-07:00"
+    checksum: 5f4b1a1dbb0b157987cc0350e7dbcfad8dc9cf4d864d33a1380f105d047bb2a2
+test:
+    metadata:
+        name: ubert full
+        platform: ios
+    build:
+        name: Ubert
+    blocks:
+        - type: instructions
+          step_type: instruction
+          step_description: go through all the screens

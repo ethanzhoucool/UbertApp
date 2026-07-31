@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
 import {suggestedPlaces, Place} from '../../data/mockPlaces';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -12,6 +12,8 @@ interface Props {
 }
 
 export function ExplorePromoSheet({visible, onClose, onSelectPlace}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <BottomSheetModal visible={visible} onClose={onClose} title="Popular nearby" maxHeight="80%">
       <Text style={styles.intro}>
@@ -36,7 +38,7 @@ export function ExplorePromoSheet({visible, onClose, onSelectPlace}: Props) {
               {place.address}
             </Text>
           </View>
-          <Icon name="chevron-right" size={20} color={Colors.gray300} />
+          <Icon name="chevron-right" size={20} color={Colors.gray500} />
         </TouchableOpacity>
       ))}
     </BottomSheetModal>
@@ -45,43 +47,45 @@ export function ExplorePromoSheet({visible, onClose, onSelectPlace}: Props) {
 
 const rankColors = ['#276EF1', '#05944F', '#FF8000', '#7B61FF', '#E11900', '#0E8388'];
 
-const styles = StyleSheet.create({
-  intro: {
-    fontSize: 13,
-    color: Colors.gray500,
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
-  },
-  rank: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rankText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.white,
-  },
-  text: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  name: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  addr: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    intro: {
+      fontSize: 14,
+      color: Colors.gray700,
+      lineHeight: 20,
+      marginBottom: 8,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: '#E5E7EB',
+    },
+    rank: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    rankText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: Colors.white,
+    },
+    text: {
+      flex: 1,
+      marginLeft: 16,
+    },
+    name: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+    addr: {
+      fontSize: 13,
+      color: Colors.gray700,
+      marginTop: 2,
+    },
+  });

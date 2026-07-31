@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {Animated, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   message: string;
@@ -11,6 +11,8 @@ interface Props {
 }
 
 export function Toast({message, visible, onHide, duration = 2000}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
@@ -66,29 +68,30 @@ export function Toast({message, visible, onHide, duration = 2000}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  toast: {
-    backgroundColor: Colors.black,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 24,
-    maxWidth: '80%',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  text: {
-    color: Colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    wrapper: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+    },
+    toast: {
+      backgroundColor: Colors.black,
+      paddingHorizontal: 18,
+      paddingVertical: 12,
+      borderRadius: 24,
+      maxWidth: '80%',
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 4},
+      shadowOpacity: 0.25,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    text: {
+      color: Colors.white,
+      fontSize: 14,
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+  });

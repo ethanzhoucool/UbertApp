@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -17,6 +17,8 @@ const options = [
 ];
 
 export function ShareTripSheet({visible, onClose, onCopyLink}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <BottomSheetModal visible={visible} onClose={onClose} title="Share trip status" maxHeight="65%">
       <Text style={styles.intro}>
@@ -59,48 +61,49 @@ export function ShareTripSheet({visible, onClose, onCopyLink}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  intro: {
-    fontSize: 13,
-    color: Colors.gray500,
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
-  },
-  copyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    marginTop: 4,
-  },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F3F3',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  copyIcon: {
-    backgroundColor: Colors.black,
-  },
-  text: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sub: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    intro: {
+      fontSize: 13,
+      color: Colors.gray500,
+      marginBottom: 8,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: '#ECECEC',
+    },
+    copyRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 16,
+      marginTop: 4,
+    },
+    iconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: '#F3F3F3',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    copyIcon: {
+      backgroundColor: Colors.black,
+    },
+    text: {
+      flex: 1,
+      marginLeft: 14,
+    },
+    label: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+    sub: {
+      fontSize: 12,
+      color: Colors.gray500,
+      marginTop: 2,
+    },
+  });

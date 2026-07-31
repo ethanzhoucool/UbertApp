@@ -1,0 +1,76 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 47f6d7ac-dce8-476d-9d3f-4e73945e0c5e
+    remote_version: 2
+    local_version: 2
+    last_synced_at: "2026-05-21T09:19:15-07:00"
+    checksum: 522aec97c6ef2b5648c1d698a5528e32dabc75739deee891678ef94123878df1
+test:
+    metadata:
+        name: ubert-atlas-uber-one
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - uber-one
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible. A profile header shows the avatar, the name "Ethan Zhou", a star rating "5.00", and an "Edit account" row. A menu lists rows "Help", "Wallet", "Activity", "Promotions", "Uber One", "Send a gift", "Saved places", "Settings", and "Sign Out".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Uber One" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Uber One landing screen is visible. The screen has a dark (near-black) background. At the top is a close (×) button on the left, a teal "Uber One" brand wordmark, a large white heading "Save on every ride, meal and order.", and a subtitle about members saving $27/month. Below is a translucent price card showing "$9.99/month" and "or $99.99/year · Save 17%". A white "Member benefits" card lists four benefits "$0 Delivery Fee", "Up to 10% off", "6% Uber Cash on rides", "Member-only offers", each with an icon. A "See all benefits" button is below them, and a teal "Try free for 1 month" CTA button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "See all benefits" button inside the Member benefits card on the Uber One landing screen.
+        - type: validation
+          step_type: validation
+          step_description: The All member benefits screen is visible. The header title reads "All member benefits" with a back chevron. The screen shows three labeled sections "EATS" (with rows "$0 Delivery Fee on food", "5–10% off pickup orders", "Member Mondays"), "RIDES" (with rows "6% Uber Cash on airport rides", "Top-tier support"), and "GROCERY & RETAIL" (with rows "$0 Delivery Fee on groceries", "5% off eligible orders"), each row with a circular icon, a bold title, and descriptive sub-text.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the All member benefits screen to return to the Uber One landing screen.
+        - type: validation
+          step_type: validation
+          step_description: The Uber One landing screen is visible again with the dark background, teal "Uber One" brand wordmark, "Save on every ride, meal and order." heading, the price card, the white "Member benefits" card, and the teal "Try free for 1 month" CTA pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the teal "Try free for 1 month" button pinned at the bottom of the Uber One landing screen.
+        - type: validation
+          step_type: validation
+          step_description: The Confirm membership screen is visible. The header title reads "Confirm membership" with a back chevron. The screen shows a "CHOOSE A PLAN" section with two radio rows "Monthly" ($9.99/mo, selected by default) and "Annual" ($99.99/yr, with green "Best value · Save 17%" meta text). Below is a "PAYMENT METHOD" section listing three rows "Visa •••• 4242" (Default, selected by default), "Amex •••• 1009" (Personal), and "Apple Pay" (Touch ID), each with an icon and radio button. An info card explains the free trial billing. A black "Start free trial" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Annual" plan radio row in the CHOOSE A PLAN section on the Confirm membership screen.
+        - type: validation
+          step_type: validation
+          step_description: The Confirm membership screen is still visible. The "Annual" plan row now shows a filled radio dot indicating it is selected, while the "Monthly" radio is empty. The info card text updates to mention "$99.99/yr" billing on the same date each year.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Start free trial" button pinned at the bottom of the Confirm membership screen.
+        - type: validation
+          step_type: validation
+          step_description: The Uber One success screen is visible. The screen has a dark background. A large teal circular check icon is centered, followed by a teal "Welcome to Uber One" brand line, a bold white heading "Your free trial is on", and a subtitle about enjoying member benefits. Below is a list of three benefits "$0 delivery on eligible orders", "Up to 10% off restaurants", "6% back on airport rides", each with a teal icon. A teal "Start exploring" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the teal "Start exploring" button pinned at the bottom of the Uber One success screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

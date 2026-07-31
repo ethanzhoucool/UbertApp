@@ -1,0 +1,54 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 40c324a1-86fc-436e-9846-d11c1449783d
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T17:21:05-07:00"
+    checksum: 454f9a329d99408c150283d484b8ad3920cb29d9c6e7cabdc1ab9a03902b03a4
+test:
+    metadata:
+        name: ubert trip cancel path
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. The "Where to?" search bar and the "Rides"/"Delivery" tabs are visible.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Where to?" search bar near the top of the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Search screen is visible with the destination input focused and showing the placeholder "Where to?". A "Recent" section and a "Suggestions" section list selectable destinations including "Times Square" and "LaGuardia Airport".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the row labeled "Times Square" in the Suggestions list.
+        - type: validation
+          step_type: validation
+          step_description: The Ride Selection screen is visible with a map at the top, a "Select a ride" heading, ride options listed, and a black "Confirm" CTA at the bottom that includes a dollar price.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Confirm" button at the bottom of the Ride Selection screen.
+        - type: validation
+          step_type: validation
+          step_description: The Finding Driver screen is visible with a black background, a white "Finding your driver" heading, and an outlined "Cancel" button at the bottom of the screen.
+        - type: manual
+          step_type: wait
+          step_description: "2"
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the outlined "Cancel" button at the bottom of the Finding Driver screen to cancel the ride request.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. A toast at the top reads "Ride cancelled". The "Where to?" search bar and the bottom tab bar with "Home", "Services", "Activity", "Account" are visible.

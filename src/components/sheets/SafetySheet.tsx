@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -44,6 +44,8 @@ const tools = [
 ];
 
 export function SafetySheet({visible, onClose}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <BottomSheetModal visible={visible} onClose={onClose} title="Safety toolkit" maxHeight="80%">
       <Text style={styles.intro}>
@@ -71,42 +73,43 @@ export function SafetySheet({visible, onClose}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  intro: {
-    fontSize: 13,
-    color: Colors.gray500,
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
-  },
-  rowImportant: {},
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  labelImportant: {
-    color: '#E11900',
-  },
-  sub: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    intro: {
+      fontSize: 13,
+      color: Colors.gray500,
+      marginBottom: 8,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: '#ECECEC',
+    },
+    rowImportant: {},
+    iconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    text: {
+      flex: 1,
+      marginLeft: 14,
+    },
+    label: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+    labelImportant: {
+      color: '#E11900',
+    },
+    sub: {
+      fontSize: 12,
+      color: Colors.gray500,
+      marginTop: 2,
+    },
+  });

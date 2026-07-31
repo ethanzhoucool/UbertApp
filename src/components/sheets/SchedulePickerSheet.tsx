@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
 import {UbertButton} from '../common/UbertButton';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -41,6 +41,8 @@ function formatPickupTime(offsetMs: number): string {
 }
 
 export function SchedulePickerSheet({visible, onClose, onSelect}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [selected, setSelected] = useState<string>('now');
   const slots = buildSlots();
 
@@ -70,7 +72,7 @@ export function SchedulePickerSheet({visible, onClose, onSelect}: Props) {
           <View style={styles.iconCol}>
             <Icon
               name={slot.key === 'now' ? 'flash-on' : 'schedule'}
-              size={20}
+              size={18}
               color={Colors.black}
             />
           </View>
@@ -91,57 +93,59 @@ export function SchedulePickerSheet({visible, onClose, onSelect}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  intro: {
-    fontSize: 13,
-    color: Colors.gray500,
-    marginBottom: 12,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
-  },
-  iconCol: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F3F3',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textCol: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sub: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-  radio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    borderColor: Colors.gray300,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioOn: {
-    borderColor: Colors.black,
-  },
-  radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.black,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    intro: {
+      fontSize: 14,
+      color: Colors.gray700,
+      lineHeight: 20,
+      marginBottom: 12,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: '#E5E7EB',
+    },
+    iconCol: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: Colors.surfaceMuted,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    textCol: {
+      flex: 1,
+      marginLeft: 16,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+    sub: {
+      fontSize: 13,
+      color: Colors.gray700,
+      marginTop: 2,
+    },
+    radio: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 2,
+      borderColor: Colors.gray300,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    radioOn: {
+      borderColor: Colors.black,
+    },
+    radioDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: Colors.black,
+    },
+  });

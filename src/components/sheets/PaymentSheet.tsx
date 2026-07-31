@@ -1,18 +1,22 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
-import {paymentMethods, PaymentMethod} from '../../data/mockPayments';
+import {PaymentMethod} from '../../data/mockPayments';
 import {useTrip} from '../../store/TripContext';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
+  onAddPaymentMethod?: () => void;
 }
 
-export function PaymentSheet({visible, onClose}: Props) {
+export function PaymentSheet({visible, onClose, onAddPaymentMethod}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const {state, dispatch} = useTrip();
+  const paymentMethods = state.savedPayments;
 
   const handleSelect = (method: PaymentMethod) => {
     dispatch({type: 'SET_PAYMENT', payload: method});
@@ -57,7 +61,16 @@ export function PaymentSheet({visible, onClose}: Props) {
         );
       })}
 
-      <TouchableOpacity style={styles.addRow} activeOpacity={0.7}>
+      <TouchableOpacity
+        style={styles.addRow}
+        activeOpacity={0.7}
+        onPress={() => {
+          if (onAddPaymentMethod) {
+            onAddPaymentMethod();
+          } else {
+            onClose();
+          }
+        }}>
         <View style={styles.addIcon}>
           <Icon name="add" size={18} color={Colors.black} />
         </View>
@@ -67,64 +80,65 @@ export function PaymentSheet({visible, onClose}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  intro: {
-    fontSize: 13,
-    color: Colors.gray500,
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
-  },
-  iconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sub: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-  radio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    borderColor: Colors.gray300,
-  },
-  addRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  addIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 8,
-    backgroundColor: '#F0F0F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addText: {
-    marginLeft: 14,
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    intro: {
+      fontSize: 13,
+      color: Colors.gray500,
+      marginBottom: 8,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: Colors.borderSubtle,
+    },
+    iconWrap: {
+      width: 38,
+      height: 38,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    text: {
+      flex: 1,
+      marginLeft: 14,
+    },
+    label: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+    sub: {
+      fontSize: 12,
+      color: Colors.gray500,
+      marginTop: 2,
+    },
+    radio: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 2,
+      borderColor: Colors.gray300,
+    },
+    addRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 16,
+    },
+    addIcon: {
+      width: 38,
+      height: 38,
+      borderRadius: 8,
+      backgroundColor: Colors.surfaceMuted,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addText: {
+      marginLeft: 14,
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+  });

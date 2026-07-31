@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {UbertText} from '../common/UbertText';
 import {Divider} from '../common/Divider';
-import {Colors, Spacing, Shadows} from '../../theme';
+import {Spacing, Shadows, useColors, ColorPalette} from '../../theme';
 import {suggestedPlaces} from '../../data/mockPlaces';
 
 interface Props {
@@ -11,6 +11,8 @@ interface Props {
 }
 
 export function SearchPanel({onSearchPress}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -64,6 +66,8 @@ export function SearchPanel({onSearchPress}: Props) {
 }
 
 function ServiceIcons() {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const services = [
     {icon: 'local-taxi', label: 'Ride'},
     {icon: 'restaurant', label: 'Food'},
@@ -87,66 +91,67 @@ function ServiceIcons() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.md,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.gray100,
-    borderRadius: 26,
-    paddingHorizontal: Spacing.base,
-    height: 52,
-    ...Shadows.card,
-  },
-  searchText: {
-    flex: 1,
-    marginLeft: Spacing.sm,
-  },
-  timePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  servicesRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: Spacing.lg,
-  },
-  serviceItem: {
-    alignItems: 'center',
-  },
-  serviceIconBg: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  suggestionsHeader: {
-    paddingVertical: Spacing.md,
-  },
-  suggestionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-  },
-  suggestionIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.gray700,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  suggestionText: {
-    flex: 1,
-    marginLeft: Spacing.md,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: Spacing.base,
+      paddingTop: Spacing.md,
+    },
+    searchBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.gray100,
+      borderRadius: 26,
+      paddingHorizontal: Spacing.base,
+      height: 52,
+      ...Shadows.card,
+    },
+    searchText: {
+      flex: 1,
+      marginLeft: Spacing.sm,
+    },
+    timePill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.white,
+      borderRadius: 20,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    servicesRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: Spacing.lg,
+    },
+    serviceItem: {
+      alignItems: 'center',
+    },
+    serviceIconBg: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: Colors.black,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    suggestionsHeader: {
+      paddingVertical: Spacing.md,
+    },
+    suggestionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: Spacing.md,
+    },
+    suggestionIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: Colors.gray700,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    suggestionText: {
+      flex: 1,
+      marginLeft: Spacing.md,
+    },
+  });

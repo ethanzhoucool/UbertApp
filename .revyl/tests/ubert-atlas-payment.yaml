@@ -1,0 +1,73 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 2305ecbd-8cf0-42e6-9cd8-13c3f6d83d60
+    remote_version: 3
+    local_version: 3
+    last_synced_at: "2026-05-21T09:42:03-07:00"
+    checksum: a38008230d131ac81ab07a65296a510aa4174cd1fddf0cf38e704b7b798720a3
+test:
+    metadata:
+        name: ubert-atlas-payment
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - payment
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder text "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar to open the Account bottom sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is open overlaying the Home screen. A circular profile avatar is at the top, then a star rating row, then a vertical list of menu rows each with a leading icon, a text label, and a right chevron. The rows in order are "Help", "Wallet", "Activity", "Promotions", "Send a gift", "Saved places", "Settings", and "Sign Out".
+        - type: manual
+          step_type: wait
+          step_description: "1"
+        - type: instructions
+          step_type: instruction
+          step_description: IMPORTANT - do NOT use URL or deep-link navigation. Perform a visual on-screen tap only. In the Account bottom sheet menu list (rows in order Help, Wallet, Activity, Promotions, Send a gift, Saved places, Settings, Sign Out), tap the row whose label text is the single word "Wallet". It is the second row from the top, directly beneath "Help". Tap the visible center of that row using a normal screen tap. Do not attempt any deep link such as ubert://wallet.
+        - type: validation
+          step_type: validation
+          step_description: The Payment bottom sheet is open with the title "Payment" at the top and the intro text "Choose how you'd like to pay for this ride." Below are saved payment method rows (e.g., Visa, Mastercard, Apple Pay, Cash) each showing a label and last-four detail with a selection radio on the right. At the bottom is an "Add payment method" row with a "+" icon.
+        - type: manual
+          step_type: wait
+          step_description: "1"
+        - type: instructions
+          step_type: instruction
+          step_description: 'IMPORTANT - do NOT use URL or deep-link navigation. Perform a visual on-screen tap only. The Payment bottom sheet is currently visible. At the very bottom of that sheet, beneath all the saved payment method rows, there is a single row containing a "+" plus icon followed by the text "Add payment method". Tap the visible center of that bottom row using a normal screen tap. Do not attempt any URL navigation.'
+        - type: validation
+          step_type: validation
+          step_description: The Add payment method screen is visible. The header reads "Add payment method" with a back chevron. A black card preview is shown near the top with placeholder "•••• •••• •••• ••••", "NAME ON CARD", and "MM/YY". Below are labeled input fields in order - "CARD NUMBER" with placeholder "1234 5678 9012 3456", "NAME ON CARD" pre-filled with "Ethan Zhou", a row containing "EXPIRATION" (placeholder "MM/YY") and "CVV" (placeholder "123"), and "BILLING ZIP" with placeholder "10001". A black "Save card" button is pinned at the bottom and is disabled until all fields are filled.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "CARD NUMBER" input field and type "4242 4242 4242 4242".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "NAME ON CARD" input field and replace its value with "Ethan Z".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "EXPIRATION" input field and type "12/29".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "CVV" input field and type "123".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "BILLING ZIP" input field and type "10001".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Save card" button pinned at the bottom of the Add payment method screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again with the "Rides"/"Delivery" tabs, the "Where to?" search bar, and the bottom tab bar showing "Home", "Services", "Activity", "Account". A success toast briefly appears reading "Card added".

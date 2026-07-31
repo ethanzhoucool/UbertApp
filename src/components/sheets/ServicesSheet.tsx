@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
 import {services, Service} from '../../data/mockServices';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -13,6 +13,8 @@ interface Props {
 }
 
 export function ServicesSheet({visible, onClose, onSelectService, title = 'Services'}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <BottomSheetModal visible={visible} onClose={onClose} title={title} maxHeight="80%">
       <View style={styles.grid}>
@@ -36,39 +38,40 @@ export function ServicesSheet({visible, onClose, onSelectService, title = 'Servi
   );
 }
 
-const styles = StyleSheet.create({
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    paddingBottom: 8,
-  },
-  tile: {
-    width: '31%',
-    padding: 12,
-    borderRadius: 14,
-    backgroundColor: '#F5F5F5',
-    alignItems: 'center',
-  },
-  iconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  name: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.black,
-    textAlign: 'center',
-  },
-  desc: {
-    fontSize: 11,
-    color: Colors.gray500,
-    textAlign: 'center',
-    marginTop: 3,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+      paddingBottom: 8,
+    },
+    tile: {
+      width: '31%',
+      padding: 12,
+      borderRadius: 14,
+      backgroundColor: Colors.surfaceMuted,
+      alignItems: 'center',
+    },
+    iconWrap: {
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      backgroundColor: Colors.white,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    name: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: Colors.black,
+      textAlign: 'center',
+    },
+    desc: {
+      fontSize: 12,
+      color: Colors.gray700,
+      textAlign: 'center',
+      marginTop: 3,
+    },
+  });

@@ -1,160 +1,253 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
+  onOpenTripHistory?: () => void;
+  onOpenWallet?: () => void;
+  onOpenPromotions?: () => void;
+  onOpenSettings?: () => void;
+  onOpenHelp?: () => void;
+  onOpenEditProfile?: () => void;
+  onOpenSavedPlaces?: () => void;
+  onOpenUberOne?: () => void;
+  onShowComingSoon?: (feature: string) => void;
 }
 
-const rows = [
-  {icon: 'account-balance-wallet', label: 'Wallet', sub: 'Payment methods, promos'},
-  {icon: 'local-offer', label: 'Promotions', sub: 'Apply codes and view offers'},
-  {icon: 'receipt-long', label: 'Trip history', sub: 'See all past rides'},
-  {icon: 'settings', label: 'Settings', sub: 'Notifications, privacy, language'},
-  {icon: 'help-outline', label: 'Help', sub: 'Support and FAQs'},
+type RowKey =
+  | 'help'
+  | 'wallet'
+  | 'activity'
+  | 'promotions'
+  | 'uber-one'
+  | 'gift'
+  | 'saved-places'
+  | 'settings'
+  | 'sign-out';
+
+const rows: {key: RowKey; icon: string; label: string}[] = [
+  {key: 'help', icon: 'help-outline', label: 'Help'},
+  {key: 'wallet', icon: 'account-balance-wallet', label: 'Wallet'},
+  {key: 'activity', icon: 'history', label: 'Activity'},
+  {key: 'promotions', icon: 'local-offer', label: 'Promotions'},
+  {key: 'uber-one', icon: 'workspace-premium', label: 'Uber One'},
+  {key: 'gift', icon: 'card-giftcard', label: 'Send a gift'},
+  {key: 'saved-places', icon: 'bookmark-border', label: 'Saved places'},
+  {key: 'settings', icon: 'settings', label: 'Settings'},
+  {key: 'sign-out', icon: 'logout', label: 'Sign Out'},
 ];
 
-export function AccountSheet({visible, onClose}: Props) {
+export function AccountSheet({
+  visible,
+  onClose,
+  onOpenTripHistory,
+  onOpenWallet,
+  onOpenPromotions,
+  onOpenSettings,
+  onOpenHelp,
+  onOpenEditProfile,
+  onOpenSavedPlaces,
+  onOpenUberOne,
+  onShowComingSoon,
+}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
+  const handleRowPress = (key: RowKey) => {
+    switch (key) {
+      case 'help':
+        if (onOpenHelp) {
+          onOpenHelp();
+        } else if (onShowComingSoon) {
+          onShowComingSoon('Help');
+        } else {
+          onClose();
+        }
+        return;
+      case 'wallet':
+        if (onOpenWallet) {
+          onOpenWallet();
+        } else {
+          onClose();
+        }
+        return;
+      case 'activity':
+        if (onOpenTripHistory) {
+          onOpenTripHistory();
+        } else {
+          onClose();
+        }
+        return;
+      case 'promotions':
+        if (onOpenPromotions) {
+          onOpenPromotions();
+        } else if (onShowComingSoon) {
+          onShowComingSoon('Promotions');
+        } else {
+          onClose();
+        }
+        return;
+      case 'uber-one':
+        if (onOpenUberOne) {
+          onOpenUberOne();
+        } else {
+          onClose();
+        }
+        return;
+      case 'saved-places':
+        if (onOpenSavedPlaces) {
+          onOpenSavedPlaces();
+        } else if (onShowComingSoon) {
+          onShowComingSoon('Saved places');
+        } else {
+          onClose();
+        }
+        return;
+      case 'gift':
+        if (onShowComingSoon) {
+          onShowComingSoon('Send a gift');
+        } else {
+          onClose();
+        }
+        return;
+      case 'settings':
+        if (onOpenSettings) {
+          onOpenSettings();
+        } else if (onShowComingSoon) {
+          onShowComingSoon('Settings');
+        } else {
+          onClose();
+        }
+        return;
+      case 'sign-out':
+        onClose();
+        return;
+    }
+  };
+
   return (
-    <BottomSheetModal visible={visible} onClose={onClose} maxHeight="80%" showHandle title="Account">
-      <View style={styles.profile}>
+    <BottomSheetModal visible={visible} onClose={onClose} maxHeight="92%" showHandle title="Account">
+      <View style={styles.profileCard}>
         <Image
-          source={{uri: 'https://i.pravatar.cc/150?img=7'}}
+          source={{
+            uri: 'https://api.dicebear.com/7.x/avataaars/png?seed=ethan&backgroundColor=fcd34d&radius=50',
+          }}
           style={styles.avatar}
         />
-        <View style={styles.profileInfo}>
-          <Text style={styles.name}>Ethan Zhou</Text>
-          <View style={styles.ratingRow}>
-            <Icon name="star" size={14} color={Colors.black} />
-            <Text style={styles.ratingText}>4.97</Text>
-          </View>
+        <Text style={styles.name}>Ethan Zhou</Text>
+        <View style={styles.ratingRow}>
+          <Icon name="star" size={14} color={Colors.black} />
+          <Text style={styles.ratingText}>5.00</Text>
         </View>
-        <TouchableOpacity style={styles.editBtn}>
-          <Text style={styles.editText}>Edit</Text>
+
+        <TouchableOpacity
+          style={styles.editRow}
+          activeOpacity={0.6}
+          onPress={() => {
+            if (onOpenEditProfile) {
+              onOpenEditProfile();
+            } else {
+              onClose();
+            }
+          }}>
+          <Text style={styles.editText}>Edit account</Text>
+          <Icon name="chevron-right" size={20} color={Colors.gray500} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.menu}>
-        {rows.map((row, i) => (
+        {rows.map(row => (
           <TouchableOpacity
-            key={row.label}
-            style={[styles.row, i < rows.length - 1 && styles.rowBorder]}
-            activeOpacity={0.6}>
-            <View style={styles.rowIconWrap}>
-              <Icon name={row.icon} size={20} color={Colors.black} />
-            </View>
-            <View style={styles.rowText}>
-              <Text style={styles.rowLabel}>{row.label}</Text>
-              <Text style={styles.rowSub}>{row.sub}</Text>
-            </View>
-            <Icon name="chevron-right" size={20} color={Colors.gray300} />
+            key={row.key}
+            style={styles.row}
+            activeOpacity={0.6}
+            onPress={() => handleRowPress(row.key)}>
+            <Icon name={row.icon} size={22} color={Colors.black} style={styles.rowIcon} />
+            <Text style={styles.rowLabel}>{row.label}</Text>
+            <Icon name="chevron-right" size={20} color={Colors.gray500} />
           </TouchableOpacity>
         ))}
       </View>
 
-      <TouchableOpacity style={styles.signOut} activeOpacity={0.7}>
-        <Text style={styles.signOutText}>Sign out</Text>
-      </TouchableOpacity>
+      <Text style={styles.version}>v1.0.0 (build 100)</Text>
     </BottomSheetModal>
   );
 }
 
-const styles = StyleSheet.create({
-  profile: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingBottom: 16,
-  },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.gray200,
-  },
-  profileInfo: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: Colors.black,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 3,
-  },
-  ratingText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: Colors.black,
-    marginLeft: 3,
-  },
-  editBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.gray300,
-  },
-  editText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  menu: {
-    backgroundColor: '#F8F8F8',
-    borderRadius: 14,
-    marginTop: 4,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-  },
-  rowBorder: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E8E8E8',
-  },
-  rowIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rowText: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  rowLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  rowSub: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-  signOut: {
-    marginTop: 16,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: Colors.gray200,
-  },
-  signOutText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#E11900',
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    profileCard: {
+      alignItems: 'center',
+      paddingVertical: 12,
+      paddingBottom: 4,
+    },
+    avatar: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: Colors.fieldFill,
+    },
+    name: {
+      fontSize: 22,
+      fontWeight: '700',
+      letterSpacing: -0.2,
+      color: Colors.black,
+      marginTop: 10,
+    },
+    ratingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 4,
+    },
+    ratingText: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: Colors.black,
+      marginLeft: 3,
+    },
+    editRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 14,
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+    },
+    editText: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.black,
+      marginRight: 4,
+    },
+    menu: {
+      marginTop: 12,
+      marginHorizontal: -20,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    rowIcon: {
+      width: 28,
+      marginRight: 16,
+      textAlign: 'center',
+    },
+    rowLabel: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: '500',
+      color: Colors.black,
+    },
+    version: {
+      textAlign: 'center',
+      fontSize: 12,
+      color: Colors.textTertiary,
+      marginTop: 20,
+      marginBottom: 8,
+    },
+  });

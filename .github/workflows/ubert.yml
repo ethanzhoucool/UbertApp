@@ -1,0 +1,57 @@
+name: Ubert
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'uber image/**'
+  workflow_dispatch:
+
+jobs:
+  ios:
+    name: iOS Simulator build
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Install CocoaPods
+        run: cd ios && pod install
+
+      - name: Build .app for iOS Simulator (Release embeds JS bundle)
+        run: |
+          set -e
+          xcodebuild \
+            -workspace ios/UberFrontPageHotReload.xcworkspace \
+            -scheme UberFrontPageHotReload \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ios/build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=NO \
+            build
+
+      - name: Zip .app artifact
+        run: |
+          set -e
+          APP_PATH="ios/build/Build/Products/Release-iphonesimulator/UberFrontPageHotReload.app"
+          test -d "$APP_PATH" || (echo "Missing $APP_PATH" && find ios/build -name '*.app' && exit 1)
+          ditto -c -k --keepParent "$APP_PATH" "$GITHUB_WORKSPACE/Ubert-Simulator.app.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ubert-Simulator.app.zip
+          path: Ubert-Simulator.app.zip
+          if-no-files-found: error

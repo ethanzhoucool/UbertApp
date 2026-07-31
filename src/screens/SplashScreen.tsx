@@ -1,14 +1,16 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {View, Animated, StyleSheet, StatusBar} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../navigation/types';
-import {Colors} from '../theme';
+import {useColors, ColorPalette} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Splash'>;
 };
 
 export function SplashScreen({navigation}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -39,17 +41,18 @@ export function SplashScreen({navigation}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logo: {
-    fontSize: 48,
-    fontWeight: '700',
-    color: Colors.white,
-    letterSpacing: 8,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.black,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    logo: {
+      fontSize: 48,
+      fontWeight: '800',
+      color: Colors.white,
+      letterSpacing: -1,
+    },
+  });

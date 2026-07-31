@@ -1,0 +1,25 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 57039048-2ae9-4443-b52a-7065a0654c75
+    remote_version: 25
+    local_version: 25
+    last_synced_at: "2026-05-20T17:18:08-07:00"
+    checksum: 6f46260ef15b4bff0e6cec5554408c3de0b7122561b44e858407e8c2e2ad9b43
+test:
+    metadata:
+        name: 'Uber book a ride (japanese) '
+        platform: ios
+        tags:
+            - ethan
+    build:
+        name: Ubert
+    variables:
+        link: https://pokemon.com
+    blocks:
+        - type: instructions
+          step_type: instruction
+          step_description: tap {{link}}
+        - type: instructions
+          step_type: instruction
+          step_description: tap {{global.var_example}}

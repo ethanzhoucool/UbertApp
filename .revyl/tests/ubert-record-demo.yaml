@@ -1,0 +1,32 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 1bf0df49-cd91-44b9-aac0-b28bfbd9d7c5
+    remote_version: 2
+    local_version: 2
+    last_synced_at: "2026-05-20T17:16:42-07:00"
+    checksum: 5cf919fd5bf80ecfba46d7fa34b18763f3a9b6e6a8534f06b9a0092205838aec
+test:
+    metadata:
+        name: ubert record demo
+        platform: ios
+        tags:
+            - ethan
+    build:
+        name: Ubert
+    blocks:
+        - type: instructions
+          step_type: instruction
+          step_description: Select 'Home' (123 W 72nd St, New York, NY) as the destination for the ride.
+        - type: instructions
+          step_type: instruction
+          step_description: Choose the UberX option priced at $12.43 and tap 'Choose UberX' to confirm the ride request.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap 'Start Trip' once the driver, Kofi, arrives.
+        - type: instructions
+          step_type: instruction
+          step_description: Rate the trip with 5 stars and select the $5 tip option for the driver.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap 'Done' to finish the rating process and return to the home screen.

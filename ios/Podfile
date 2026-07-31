@@ -14,7 +14,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'UbertApp' do
+target 'UberFrontPageHotReload' do
   config = use_native_modules!
 
   pod 'RNWorklets', :path => '../node_modules/react-native-worklets'

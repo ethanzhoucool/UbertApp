@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {UbertText} from '../common/UbertText';
 import {Divider} from '../common/Divider';
 import {Driver} from '../../data/mockDriver';
-import {Colors, Spacing} from '../../theme';
+import {Spacing, useColors, ColorPalette} from '../../theme';
 
 interface Props {
   driver: Driver;
@@ -13,6 +13,8 @@ interface Props {
 }
 
 export function DriverCard({driver, eta, statusText}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -71,6 +73,8 @@ export function DriverCard({driver, eta, statusText}: Props) {
 }
 
 function ActionButton({icon, label}: {icon: string; label: string}) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <TouchableOpacity style={styles.actionBtn}>
       <View style={styles.actionCircle}>
@@ -83,59 +87,60 @@ function ActionButton({icon, label}: {icon: string; label: string}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.base,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  etaPill: {
-    backgroundColor: Colors.black,
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    alignSelf: 'flex-start',
-    marginTop: Spacing.sm,
-  },
-  driverRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  driverInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.gray200,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  carInfo: {
-    alignItems: 'flex-end',
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  actionBtn: {
-    alignItems: 'center',
-  },
-  actionCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.gray100,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: Spacing.base,
+      paddingVertical: Spacing.base,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    etaPill: {
+      backgroundColor: Colors.black,
+      borderRadius: 20,
+      paddingHorizontal: 14,
+      paddingVertical: 6,
+      alignSelf: 'flex-start',
+      marginTop: Spacing.sm,
+    },
+    driverRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    driverInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: Colors.gray200,
+    },
+    ratingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 2,
+    },
+    carInfo: {
+      alignItems: 'flex-end',
+    },
+    actionsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    actionBtn: {
+      alignItems: 'center',
+    },
+    actionCircle: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: Colors.gray100,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });

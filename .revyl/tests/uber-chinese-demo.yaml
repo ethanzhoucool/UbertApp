@@ -1,0 +1,30 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 1fa402a7-2051-4899-8f41-7091aabc3f14
+    remote_version: 2
+    local_version: 2
+    last_synced_at: "2026-05-20T17:17:39-07:00"
+    checksum: 09d31f61c95040f3d794107bb065070f1a5376614ba59032ac2f2a445cd8f9a8
+test:
+    metadata:
+        name: uber (chinese) demo
+        platform: ios
+    build:
+        name: Ubert CN
+    blocks:
+        - type: instructions
+          step_type: instruction
+          step_description: Select the 'Ride' option and set the destination to 'Home'.
+        - type: instructions
+          step_type: instruction
+          step_description: Confirm the 'Ubert X' ride request for ¥12.43.
+        - type: instructions
+          step_type: instruction
+          step_description: Start the trip once the driver arrives.
+        - type: instructions
+          step_type: instruction
+          step_description: Rate the driver 'Zhang Wei' 5 stars and select the $1 tip option.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap 'Done' to complete the post-trip feedback flow and return to the home screen.

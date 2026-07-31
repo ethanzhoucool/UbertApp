@@ -1,0 +1,64 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: b68d5da9-ecf4-4c32-951f-6b7c7ad1e248
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-21T09:23:16-07:00"
+    checksum: 0f0d0fd7378a60a2a365a9c1fb7dc7b27c7fc871cdaefaa09570d11ed2bb648c
+test:
+    metadata:
+        name: ubert-atlas-activity
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - activity
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible. A profile header shows the avatar, the name "Ethan Zhou", a star rating "4.97", and an "Edit" button. The menu lists rows including "Help", "Wallet", "Activity", "Promotions", "Uber One", "Send a gift", "Saved places", "Settings", and a "Sign Out" button.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Activity" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Activity screen is visible as a full screen (not a sheet). The header title reads "Activity" with a back chevron. Below the header there is a tab row with two tabs labeled "Upcoming" and "Past", with the "Past" tab selected (bold black underline). Below the tabs is a list of past trip rows, each row showing a car thumbnail on the left, a destination title (e.g. "JFK Airport - Terminal 4", "Whole Foods Market", "Madison Square Garden"), a meta line with the date and ride class (e.g. "UberXL", "UberX"), small badges with star rating and duration, and a fare price (e.g. "$48.70", "$9.12") with a chevron on the right.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the first past trip row in the list (the one with destination "JFK Airport - Terminal 4").
+        - type: validation
+          step_type: validation
+          step_description: The Trip details screen is visible. The header title reads "Trip details" with a back chevron. The screen shows the trip date, the destination heading "JFK Airport - Terminal 4", a route card with a green "Pickup" dot and a black "Dropoff" dot showing the addresses, a "DRIVER" section showing the driver "Maya" with car "Black Model 3 · K92-TRN" and a star-rating badge "4.88", and a "RECEIPT" section showing rows "Vehicle" with value "UberXL", "Duration" with value "38 min", and "Total" with value "$48.70" in bold. Below are three action buttons "Receipt", "Get help", and "Rebook".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Trip details screen to return to the Activity screen.
+        - type: validation
+          step_type: validation
+          step_description: The Activity screen is visible again with the "Upcoming" and "Past" tabs at the top, "Past" still selected, and the list of past trip rows visible.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Upcoming" tab in the tab row at the top of the Activity screen.
+        - type: validation
+          step_type: validation
+          step_description: The Activity screen shows the "Upcoming" tab selected (bold black underline) and the "Past" tab unselected. Because there are no reserved rides, an empty state is shown with a large calendar/event icon, a heading "Nothing planned yet", and a subtitle "Reserve a ride to see it here before pickup."
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Activity screen to return to the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

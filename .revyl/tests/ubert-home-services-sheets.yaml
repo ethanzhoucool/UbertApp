@@ -1,0 +1,63 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 57ec4d8f-125a-4a47-8588-6cedc1182c0d
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T17:20:51-07:00"
+    checksum: 81a46f69e6a39bb701537a1e9209acd8aa221bedeaec13140e4be14d21bf69a3
+test:
+    metadata:
+        name: ubert home services sheets
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. Top tabs read "Rides" and "Delivery", the search bar reads "Where to?", and the bottom tab bar shows "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Services" tab in the bottom tab bar.
+        - type: validation
+          step_type: validation
+          step_description: The Services bottom sheet is open with the title "Services" at the top. It shows a grid of service cards (e.g. Ride, Package, Reserve, Rent) inside a modal sheet that overlays the Home screen.
+        - type: instructions
+          step_type: instruction
+          step_description: Dismiss the Services sheet by swiping it down from its handle, or tap the X close button on the sheet.
+        - type: manual
+          step_type: wait
+          step_description: "1"
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Activity" tab in the bottom tab bar.
+        - type: validation
+          step_type: validation
+          step_description: The Activity bottom sheet is open with the title "Past trips" at the top. It either shows a list of past trips with fares, or an empty state with the text "No past trips yet" and "More rides will appear here".
+        - type: instructions
+          step_type: instruction
+          step_description: Dismiss the Activity sheet by swiping it down from its handle, or tap the X close button on the sheet.
+        - type: manual
+          step_type: wait
+          step_description: "1"
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is open with the title "Account" at the top. It shows the user name "Ethan Zhou", a star rating "4.97", an "Edit" link, and a list of rows. A "Sign out" row is visible near the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Dismiss the Account sheet by swiping it down from its handle, or tap the X close button on the sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again with the "Where to?" search bar and bottom tab bar.

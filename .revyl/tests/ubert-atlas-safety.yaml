@@ -1,0 +1,112 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 815d4fdf-7b7a-47de-865b-e6336ea190ce
+    remote_version: 2
+    local_version: 2
+    last_synced_at: "2026-05-21T09:19:02-07:00"
+    checksum: 3d6dcd57262294a26989ce264187b6f4cd7586410ac8970d970ae044ac1f0b9c
+test:
+    metadata:
+        name: ubert-atlas-safety
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - safety
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible. A profile header shows the avatar, the name "Ethan Zhou", a star rating "5.00", and an "Edit account" row. A menu lists rows "Help", "Wallet", "Activity", "Promotions", "Uber One", "Send a gift", "Saved places", "Settings", and "Sign Out".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Settings" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible. The header title reads "Settings" with a back chevron. The screen shows a profile row at top with avatar, name "Ethan Zhou", and phone "+1 (555) 010-2233", followed by grouped sections including "PERSONAL" (with "Edit account", "Family and teens", "Manage Uber One"), "SAFETY" (with "Safety hub"), "LOGIN & SECURITY" (with "Password", "2-step verification", "Trusted contacts"), and other sections below.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Safety hub" row under the SAFETY section on the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Safety hub screen is visible. The header title reads "Safety hub" with a back chevron. The screen shows a gray banner card with a black shield icon, the heading "Your safety, on every trip", and subtitle "We've built tools so you can ride with confidence — anytime, anywhere." Below it a "SAFETY TOOLKIT" section lists four rows "RideCheck", "Trusted contacts", "PIN verification", "Share my trip", each with a circular icon and chevron. An "EMERGENCY" section at the bottom shows a red-tinted "Call 911" row.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "RideCheck" row in the SAFETY TOOLKIT section on the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The RideCheck screen is visible. The header title reads "RideCheck" with a back chevron. The screen shows a large black circular health-and-safety icon, a bold heading "RideCheck has your back", and descriptive text about automatic check-ins. Below it is a gray "RideCheck" toggle card with a black switch (on by default) and a "WHAT WE LOOK FOR" section listing four rows "Unexpected route changes", "Long unexpected stops", "Possible crash detected", "Early or late drop-off".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the RideCheck screen to return to the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The Safety hub screen is visible again with the "Your safety, on every trip" banner and the SAFETY TOOLKIT list showing "RideCheck", "Trusted contacts", "PIN verification", "Share my trip".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Trusted contacts" row in the SAFETY TOOLKIT section on the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The Trusted contacts screen is visible. The header title reads "Trusted contacts" with a back chevron and a "+" add icon on the right. The screen shows an intro paragraph "We'll let your trusted contacts know if you tap 'Share Trip' or call 911 during a ride.", a list of contact rows each with avatar, name, phone number, and a small circular close (×) remove button, plus an "Add trusted contact" row at the bottom with a "+" icon.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Trusted contacts screen to return to the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The Safety hub screen is visible again with the "Your safety, on every trip" banner and the SAFETY TOOLKIT list showing "RideCheck", "Trusted contacts", "PIN verification", "Share my trip".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "PIN verification" row in the SAFETY TOOLKIT section on the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The PIN verification screen is visible. The header title reads "PIN verification" with a back chevron. The screen shows four large gray digit tiles displaying "4", "2", "7", "9" centered at the top, a bold heading "Make sure you're in the right car", a subtitle about driver entering a 4-digit code, a gray "Require a PIN on every trip" toggle card with a black switch (off by default), a "HOW IT WORKS" section with three numbered steps "See your PIN before pickup", "Give the PIN to your driver", "Driver enters it to start", and an info tip card at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the PIN verification screen to return to the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The Safety hub screen is visible again with the "Your safety, on every trip" banner and the SAFETY TOOLKIT list showing "RideCheck", "Trusted contacts", "PIN verification", "Share my trip".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Share my trip" row in the SAFETY TOOLKIT section on the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The Share my trip screen is visible. The header title reads "Share my trip" with a back chevron. The screen shows a large black circular share-location icon, a bold heading "Always know they're on the way", and descriptive text about sharing live location. A "SHARE WITH" section lists trusted contact rows each with avatar, name, phone, and a circular checkbox (at least one selected by default). An "OR SHARE A LINK" section shows a gray card with a "uber.com/r/..." link and a "Copy" button. A black "Share with N contact(s)" button is pinned at the bottom with a send icon.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Share my trip screen to return to the Safety hub screen.
+        - type: validation
+          step_type: validation
+          step_description: The Safety hub screen is visible again with the "Your safety, on every trip" banner and the SAFETY TOOLKIT list showing "RideCheck", "Trusted contacts", "PIN verification", "Share my trip".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Safety hub screen to return to the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible again with the "PERSONAL", "SAFETY", and "LOGIN & SECURITY" sections including the "Safety hub" row.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Settings screen to return to the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible again with the profile header and menu rows including "Help", "Wallet", "Activity", "Promotions", "Uber One", "Send a gift", "Saved places", "Settings".
+        - type: instructions
+          step_type: instruction
+          step_description: Swipe down on the Account bottom sheet, or tap outside it, to dismiss it and return to the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

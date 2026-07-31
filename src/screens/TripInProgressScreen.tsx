@@ -1,10 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {View, StyleSheet, StatusBar, Animated, Text, TouchableOpacity} from 'react-native';
-import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
+import React, {useEffect, useMemo, useState, useRef} from 'react';
+import {View, StyleSheet, StatusBar, Animated, Text} from 'react-native';
+import {PressScale} from '../components/common/PressScale';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {MapBackground} from '../components/common/MapBackground';
 import {Divider} from '../components/common/Divider';
 import {Toast} from '../components/common/Toast';
 import {ShareTripSheet} from '../components/sheets/ShareTripSheet';
@@ -14,7 +15,7 @@ import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
 import {routeCoordinates} from '../data/mockRouteCoords';
 import {getArrivalTime} from '../utils/formatTime';
-import {Colors} from '../theme';
+import {useColors, ColorPalette} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'TripInProgress'>;
@@ -26,11 +27,15 @@ type ActiveSheet = 'share' | 'call' | 'safety' | null;
 const TRIP_DURATION = 10000;
 
 export function TripInProgressScreen({navigation, route}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
   const {driver} = route.params;
   const {state} = useTrip();
   const [carIndex, setCarIndex] = useState(0);
   const progressAnim = useRef(new Animated.Value(0)).current;
+  const carProgressAnim = useRef(new Animated.Value(0)).current;
+  const [carProgress, setCarProgress] = useState(0);
   const [minutesLeft, setMinutesLeft] = useState(8);
   const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
   const [toastMsg, setToastMsg] = useState('');
@@ -40,13 +45,6 @@ export function TripInProgressScreen({navigation, route}: Props) {
     setToastMsg(msg);
     setToastVisible(true);
   };
-
-  const carCoord =
-    routeCoordinates[carIndex] ||
-    routeCoordinates[routeCoordinates.length - 1];
-
-  // Remaining route: from car's current position to destination
-  const remainingRoute = routeCoordinates.slice(carIndex);
 
   useEffect(() => {
     const stepTime = TRIP_DURATION / routeCoordinates.length;
@@ -68,6 +66,21 @@ export function TripInProgressScreen({navigation, route}: Props) {
     }, stepTime);
     return () => clearInterval(interval);
   }, [navigation, driver, state.selectedRide]);
+
+  // Drive carProgress 0 → 1 (pickup → destination) along the faux route.
+  useEffect(() => {
+    const target = carIndex / Math.max(1, routeCoordinates.length - 1);
+    Animated.timing(carProgressAnim, {
+      toValue: target,
+      duration: 800,
+      useNativeDriver: false,
+    }).start();
+  }, [carIndex, carProgressAnim]);
+
+  useEffect(() => {
+    const id = carProgressAnim.addListener(({value}) => setCarProgress(value));
+    return () => carProgressAnim.removeListener(id);
+  }, [carProgressAnim]);
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -94,42 +107,15 @@ export function TripInProgressScreen({navigation, route}: Props) {
       <StatusBar barStyle="dark-content" />
 
       {/* Map */}
-      <MapView
-        provider={PROVIDER_DEFAULT}
+      <MapBackground
+        showPickup
+        showDropoff
+        showPolyline
+        showCar
+        carProgress={carProgress}
         style={styles.map}
-        initialRegion={{
-          latitude:
-            (routeCoordinates[0].latitude +
-              routeCoordinates[routeCoordinates.length - 1].latitude) /
-            2,
-          longitude:
-            (routeCoordinates[0].longitude +
-              routeCoordinates[routeCoordinates.length - 1].longitude) /
-            2,
-          latitudeDelta: 0.025,
-          longitudeDelta: 0.025,
-        }}>
-        {/* Route line — only shows remaining path, shrinks as car moves */}
-        {remainingRoute.length >= 2 && (
-          <Polyline
-            coordinates={remainingRoute}
-            strokeColor={Colors.black}
-            strokeWidth={4}
-          />
-        )}
+      />
 
-        {/* Car marker */}
-        <Marker coordinate={carCoord}>
-          <View style={styles.carMarker}>
-            <Icon name="local-taxi" size={18} color={Colors.white} />
-          </View>
-        </Marker>
-
-        {/* Destination marker */}
-        <Marker coordinate={routeCoordinates[routeCoordinates.length - 1]}>
-          <View style={styles.destMarker} />
-        </Marker>
-      </MapView>
 
       {/* Arrival chip */}
       <View style={[styles.arrivalChip, {top: insets.top + 10}]}>
@@ -141,7 +127,7 @@ export function TripInProgressScreen({navigation, route}: Props) {
       </View>
 
       {/* Bottom card */}
-      <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 12}]}>
+      <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 16}]}>
         <View style={styles.handle} />
 
         <Text style={styles.heading}>Heading to your destination</Text>
@@ -205,46 +191,38 @@ function ActionBtn({
   label: string;
   onPress: () => void;
 }) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
-    <TouchableOpacity style={styles.actionItem} onPress={onPress} activeOpacity={0.7}>
+    <PressScale style={styles.actionItem} onPress={onPress}>
       <View style={styles.actionCircle}>
-        <Icon name={icon} size={20} color={Colors.black} />
+        <Icon name={icon} size={18} color={Colors.black} />
       </View>
       <Text style={styles.actionLabel}>{label}</Text>
-    </TouchableOpacity>
+    </PressScale>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
   container: {
     flex: 1,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  carMarker: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: Colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  destMarker: {
-    width: 14,
-    height: 14,
-    backgroundColor: Colors.black,
-    borderRadius: 2,
-    borderWidth: 2,
-    borderColor: Colors.white,
-  },
   arrivalChip: {
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: Colors.black,
-    borderRadius: 22,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    shadowColor: '#000',
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    shadowOffset: {width: 0, height: 2},
+    elevation: 4,
   },
   arrivalText: {
     fontSize: 15,
@@ -262,10 +240,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: -3},
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOffset: {width: 0, height: -4},
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 12,
   },
   handle: {
     width: 32,
@@ -286,15 +264,15 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   progressBg: {
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#EEEEEE',
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: Colors.borderSubtle,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
     backgroundColor: Colors.black,
-    borderRadius: 2,
+    borderRadius: 1.5,
   },
   progressLabel: {
     fontSize: 13,
@@ -312,7 +290,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F3F3F3',
+    backgroundColor: Colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -321,4 +299,4 @@ const styles = StyleSheet.create({
     color: Colors.gray700,
     marginTop: 5,
   },
-});
+  });

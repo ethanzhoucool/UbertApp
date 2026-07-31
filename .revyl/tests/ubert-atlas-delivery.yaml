@@ -1,0 +1,82 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 67a194a8-760d-4930-8cb2-6fd252f87eba
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T20:59:01-07:00"
+    checksum: 89b19dc02e76a567a7e20f833236356dd3f5d1b7bd93ad05eaab9bb110cdf93a
+test:
+    metadata:
+        name: ubert-atlas-delivery
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - delivery
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder text "Where to?", a black pill labeled "Now" next to the search bar, and saved places labeled "Work" and "Home". A "Suggestions" section shows cards labeled "Ride", "Package", "Reserve", and "Rent". A bottom tab bar shows "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Delivery" top tab at the top of the Home screen (the tab to the right of "Rides").
+        - type: validation
+          step_type: validation
+          step_description: The Home screen now shows the Delivery branch. The "Delivery" tab is the active (underlined) top tab. A search row labeled "Find food in your area" is shown near the top, followed by a horizontal "Cuisines" row with chips "Pizza", "Sushi", "Burgers", "Healthy", "Asian". Below that is a "Featured restaurants" section listing restaurants such as "Joe's Pizza" and "Sakura Sushi", each with a star rating and ETA in minutes. A "See all restaurants" link is visible at the bottom of the list.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "See all restaurants" row at the bottom of the Delivery section on Home to open the full Food delivery browse screen.
+        - type: validation
+          step_type: validation
+          step_description: The Delivery Browse screen is visible. The header title reads "Food delivery". Below the header is a search input with placeholder "Find food in your area", a "Cuisines" section with a horizontal chip row (Pizza, Sushi, Burgers, Healthy, Asian), and a "Featured restaurants" section listing restaurant cards with names, cuisine subtitle, star rating, ETA minutes, and a delivery fee like "$2.99 fee".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Joe's Pizza" restaurant card in the "Featured restaurants" list.
+        - type: validation
+          step_type: validation
+          step_description: The Restaurant Detail screen is visible. The header title shows the restaurant name "Joe's Pizza". A colored banner is at the top. Below it is a summary block with the restaurant name, cuisine "Pizza • Italian", a star rating, ETA in minutes, and a delivery fee. The menu is organized into sections (e.g. "Popular", "Mains", "Sides", "Drinks") and each menu item has a name, description, a dollar price like "$14.50", and a black circular "+" add button on the right.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black circular "+" add button on the right side of the "Classic Margherita" menu item to add it to the cart.
+        - type: validation
+          step_type: validation
+          step_description: A floating "View cart" bar has appeared at the bottom of the Restaurant Detail screen. The bar is a black button whose label includes the text "View cart (1)" and a dollar subtotal, e.g. "View cart (1) • $14.50".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "View cart" button at the bottom of the Restaurant Detail screen to open the cart.
+        - type: validation
+          step_type: validation
+          step_description: The Delivery Cart screen is visible. The header title reads "Your cart". At the top is a restaurant summary row showing the restaurant name and "min •" with the cuisine. Below it is a cart line item with the item name, a price like "$14.50", and a quantity stepper with "-", a quantity number, and "+". A summary block lists rows for "Subtotal", "Delivery fee", "Service fee", "Tax", and a bold "Total" row. A black "Checkout" button is pinned to the bottom and its label includes the total, e.g. "Checkout • $20.46".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Checkout" button at the bottom of the Your cart screen.
+        - type: validation
+          step_type: validation
+          step_description: The Delivery Checkout screen is visible. The header title reads "Checkout" and the body has a heading "Confirm your delivery order". Sections are labeled "DELIVERY ADDRESS" (with an address row showing a place name and street), "PAYMENT METHOD" (with the active payment label and detail), and "ORDER SUMMARY" (listing each cart line with quantity, name, and price). A totals block lists "Subtotal", "Delivery fee", "Service fee", "Tax", and a bold "Total" row. A black "Place order" button is pinned to the bottom, e.g. "Place order • $20.46".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Place order" button at the bottom of the Checkout screen.
+        - type: validation
+          step_type: validation
+          step_description: The Delivery Tracking screen is visible. The header title reads "Tracking your order". A light blue map placeholder labeled "Live map" fills the top portion. Below it is a courier card showing "Marcus is on the way" with the restaurant name and the current stage such as "Order placed", and a circular call button on the right. An "Order status" heading is below the courier card with a vertical timeline whose rows are "Order placed", "Restaurant accepted", "Preparing", "Out for delivery", and "Delivered". A black "Back to home" or "Done" button is pinned to the bottom.
+        - type: manual
+          step_type: wait
+          step_description: "12"
+        - type: validation
+          step_type: validation
+          step_description: The Delivery Tracking screen has advanced through all stages. The timeline shows "Delivered" as the current/completed stage and the bottom button label is now "Done".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Done" button at the bottom of the Tracking your order screen to finish the order and return Home.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" top tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

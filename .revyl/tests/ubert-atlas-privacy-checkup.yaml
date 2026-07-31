@@ -1,0 +1,94 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 604dae50-2b0f-4dba-be8f-a407927faf02
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-21T09:19:55-07:00"
+    checksum: c214da786d513bb4157281a51742adcc6e2f0c1fd40a089980b4f616aa5c067f
+test:
+    metadata:
+        name: ubert-atlas-privacy-checkup
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - privacy-checkup
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible. A profile header shows the avatar, the name "Ethan Zhou", a star rating "4.97", and an "Edit" button. A menu lists rows "Wallet", "Promotions", "Trip history", "Settings", "Help", and a "Sign out" button at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Settings" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible. The header title reads "Settings" with a back chevron. The screen shows an "Account settings" heading and a list of rows "Notifications", "Privacy", "Language", "Appearance", a "Sign out" button, and the version string "Ubert · v1.0.0" at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Privacy" row on the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy & data screen is visible. The header title reads "Privacy & data" with a back chevron. Near the top is intro text reading "Manage your privacy preferences and how Ubert handles your data." followed by a black "Start privacy checkup" banner with a shield icon on the left, subtitle "A 3-step review of your location, data and ad preferences." and a white chevron on the right. Below it are tiles "Location", "Manage your data", "Stored contacts", a "PERSONALIZATION" section with toggles "Personalized ads" and "Share trip data for research", and a red "Delete your account" row at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Start privacy checkup" banner near the top of the Privacy & data screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy checkup screen is visible on step 1. The header title reads "Privacy checkup" with a back chevron. A black progress bar near the top shows partial fill with the label "Step 1 of 3". A black circular icon (location pin) is shown above a large title "Review location settings" with subtitle "Choose when Uber can access your location. We use it to match you with nearby drivers and improve ETAs." Three radio option cards are listed "Always", "While using app" (currently selected with a filled radio dot and bordered black), and "Never", each with a description below. A black "Continue" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Continue" button at the bottom of the Privacy checkup screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy checkup screen now shows step 2. The progress bar is further filled and the label reads "Step 2 of 3". A black circular icon (folder) is shown above a title "Review data shared with partners" with subtitle "Some data helps researchers improve safety and mobility. You can opt out anytime." A single grey toggle card "Share trip data for research" with subtitle "Help improve safety and urban mobility studies (anonymized)." and a black switch toggled on is shown. The black "Continue" button is still pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Continue" button at the bottom of the Privacy checkup screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy checkup screen now shows step 3. The progress bar is fully (or nearly fully) filled and the label reads "Step 3 of 3". A black circular icon (megaphone) is shown above a title "Review ad personalization" with subtitle "See offers based on your trips and orders, or opt out for generic promotions only." A grey toggle card "Personalized ads" with subtitle "Tailor promos to places you go and food you like." and a switch toggled off is shown. The black "Continue" button is still pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Continue" button at the bottom of the Privacy checkup screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy checkup screen now shows the completion step. The progress bar is no longer visible. A large green circle with a white check mark is shown center-screen, with a bold title "You're all set" and the subtitle "Your privacy preferences are saved. You can revisit Privacy & data settings any time." Below is a grey summary card listing rows "Location — While using", "Research data — Shared", "Personalized ads — Off". A black "Finish" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Finish" button at the bottom of the Privacy checkup screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy & data screen is visible again with the "Start privacy checkup" banner, the "Location", "Manage your data", "Stored contacts" tiles, the "PERSONALIZATION" toggle section, and the red "Delete your account" row at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Privacy & data screen to return to the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible again with rows "Notifications", "Privacy", "Language", "Appearance".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Settings screen to return to the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible again with rows "Wallet", "Promotions", "Trip history", "Settings", "Help".
+        - type: instructions
+          step_type: instruction
+          step_description: Swipe down on the Account bottom sheet, or tap outside it, to dismiss it and return to the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

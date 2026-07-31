@@ -1,0 +1,145 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 6ff3df35-c4cf-455c-9893-f859af01a702
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T20:59:26-07:00"
+    checksum: 1a9844a48dfa4417f7e5cbf0e1910347f55dbe36e278f003e53d12f17c3d7387
+test:
+    metadata:
+        name: ubert-atlas-account
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - account
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible. A profile header shows the avatar, the name "Ethan Zhou", a star rating "4.97", and an "Edit" button. A menu lists rows "Wallet", "Promotions", "Trip history", "Settings", "Help", and a "Sign out" button at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Edit" button in the profile header at the top of the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Edit profile screen is visible. The header title reads "Edit profile" with a back chevron. A large circular avatar with a camera button is shown at the top, followed by three labeled fields "NAME", "EMAIL", "PHONE" pre-filled with "Ethan Zhou", "ethan@example.com", and "+1 (555) 010-2233". A black "Save changes" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "NAME" text field on the Edit profile screen and change its value to "Ethan Z".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Save changes" button at the bottom of the Edit profile screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again with a toast reading "Profile updated". The bottom tab bar shows "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen to re-open the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible again with the profile header and rows "Wallet", "Promotions", "Trip history", "Settings", "Help".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Promotions" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Promotions screen is visible. The header title reads "Promotions" with a back chevron. The screen shows a "Your promotions" heading, a promo code input field with placeholder "Enter promo code" next to a black "Add" button, an "AVAILABLE OFFERS" section label, and a vertical list of promo cards each with a black tag icon, a title, a promo code, a description, an expiration date, and an "Apply" button on the right.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Promotions screen to return to the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible again with rows "Wallet", "Promotions", "Trip history", "Settings", "Help".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Settings" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible. The header title reads "Settings" with a back chevron. The screen shows an "Account settings" heading and a list of rows "Notifications" (sub "Order updates, promotions"), "Privacy" (sub "Share data, personalized ads"), "Language" (sub "English (US)"), "Appearance" (sub "Light, dark, system"), a "Sign out" button, and the version string "Ubert · v1.0.0" at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Notifications" row on the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Notifications settings screen is visible. The header title reads "Notifications" with a back chevron. The screen shows a "Notification preferences" heading, a subtitle "Choose which alerts Ubert sends to your phone.", and four toggle rows labeled "Order updates", "Trip updates", "Promotions", and "Account activity" each with a black switch on the right.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Notifications screen to return to the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible again with rows "Notifications", "Privacy", "Language", "Appearance".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Privacy" row on the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Privacy settings screen is visible. The header title reads "Privacy" with a back chevron. The screen shows a "Privacy controls" heading, a subtitle "Control how Ubert uses your data.", three toggle rows "Share usage data", "Personalized ads", "Location history", and a red-tinted "Delete account" danger row at the bottom with sub "Permanently remove your account and data".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Privacy screen to return to the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible again with rows "Notifications", "Privacy", "Language", "Appearance".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Language" row on the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Language settings screen is visible. The header title reads "Language" with a back chevron. The screen shows a "Choose your language" heading and a list of language rows "English" (sub "English (US)"), "Español" (sub "Spanish"), "Français" (sub "French"), "Deutsch" (sub "German"), "日本語" (sub "Japanese"), "中文" (sub "Chinese"), each with a radio button on the right and "English" selected by default.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Language screen to return to the Settings screen.
+        - type: validation
+          step_type: validation
+          step_description: The Settings screen is visible again with rows "Notifications", "Privacy", "Language", "Appearance".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Settings screen to return to the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible again with rows "Wallet", "Promotions", "Trip history", "Settings", "Help".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Help" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Help screen is visible. The header title reads "Help" with a back chevron. The screen shows a "Help center" heading, a subtitle "Quick answers to common questions.", a list of expandable FAQ cards starting with "How do I cancel a ride?" (expanded), "When will I be charged?", "How do tips work?", "What if I left something in the car?", "Are pets allowed?", and a bordered "Contact support" row at the bottom with a black mail icon and sub "Get help by email — we reply in under 24 hours".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Contact support" row at the bottom of the Help screen.
+        - type: validation
+          step_type: validation
+          step_description: The Contact support screen is visible. The header title reads "Contact support" with a back chevron. The screen shows a "How can we help?" heading, a subtitle "Tell us what's going on and we'll get back to you.", a "SUBJECT" dropdown field showing "Trip issue", a "MESSAGE" multi-line text area with placeholder "Describe your issue...", and a black "Submit" button pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Contact support screen to return to the Help screen.
+        - type: validation
+          step_type: validation
+          step_description: The Help screen is visible again with the "Help center" heading and the list of FAQ cards.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Help screen to return to the Account sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible again with rows "Wallet", "Promotions", "Trip history", "Settings", "Help".
+        - type: instructions
+          step_type: instruction
+          step_description: Swipe down on the Account bottom sheet, or tap outside it, to dismiss it and return to the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

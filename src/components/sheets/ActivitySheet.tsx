@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
 import {useTrip} from '../../store/TripContext';
 import {CompletedTrip, formatTripDate} from '../../data/mockTripHistory';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -12,25 +12,30 @@ interface Props {
 }
 
 export function ActivitySheet({visible, onClose}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const {state} = useTrip();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <BottomSheetModal visible={visible} onClose={onClose} title="Past trips" maxHeight="85%">
+    <BottomSheetModal visible={visible} onClose={onClose} title="Past trips" maxHeight="92%">
       {state.history.length === 0 ? (
         <View style={styles.empty}>
           <Icon name="receipt-long" size={40} color={Colors.gray300} />
           <Text style={styles.emptyText}>No past trips yet</Text>
         </View>
       ) : (
-        state.history.map(trip => (
-          <TripRow
-            key={trip.id}
-            trip={trip}
-            expanded={expanded === trip.id}
-            onToggle={() => setExpanded(expanded === trip.id ? null : trip.id)}
-          />
-        ))
+        <>
+          {state.history.map(trip => (
+            <TripRow
+              key={trip.id}
+              trip={trip}
+              expanded={expanded === trip.id}
+              onToggle={() => setExpanded(expanded === trip.id ? null : trip.id)}
+            />
+          ))}
+          <Text style={styles.ghostText}>More rides will appear here</Text>
+        </>
       )}
     </BottomSheetModal>
   );
@@ -45,6 +50,8 @@ function TripRow({
   expanded: boolean;
   onToggle: () => void;
 }) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <View>
       <TouchableOpacity style={styles.row} onPress={onToggle} activeOpacity={0.7}>
@@ -97,6 +104,8 @@ function TripRow({
 }
 
 function ReceiptRow({label, value, bold}: {label: string; value: string; bold?: boolean}) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <View style={styles.receiptRow}>
       <Text style={styles.receiptLabel}>{label}</Text>
@@ -105,78 +114,86 @@ function ReceiptRow({label, value, bold}: {label: string; value: string; bold?: 
   );
 }
 
-const styles = StyleSheet.create({
-  empty: {
-    paddingVertical: 60,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 14,
-    color: Colors.gray500,
-    marginTop: 12,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-  },
-  carImg: {
-    width: 56,
-    height: 36,
-  },
-  info: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  dest: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  meta: {
-    fontSize: 12,
-    color: Colors.gray500,
-    marginTop: 2,
-  },
-  right: {
-    alignItems: 'flex-end',
-  },
-  fare: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.black,
-  },
-  receipt: {
-    backgroundColor: '#F8F8F8',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 12,
-  },
-  receiptRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 4,
-  },
-  receiptLabel: {
-    fontSize: 13,
-    color: Colors.gray500,
-  },
-  receiptValue: {
-    fontSize: 13,
-    color: Colors.black,
-    fontWeight: '500',
-  },
-  receiptValueBold: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    gap: 2,
-    marginTop: 8,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#ECECEC',
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    empty: {
+      paddingVertical: 60,
+      alignItems: 'center',
+    },
+    emptyText: {
+      fontSize: 14,
+      color: Colors.gray500,
+      marginTop: 12,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+    },
+    carImg: {
+      width: 56,
+      height: 36,
+    },
+    info: {
+      flex: 1,
+      marginLeft: 16,
+    },
+    dest: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.black,
+    },
+    meta: {
+      fontSize: 13,
+      color: Colors.gray700,
+      marginTop: 2,
+    },
+    right: {
+      alignItems: 'flex-end',
+    },
+    fare: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: Colors.black,
+    },
+    receipt: {
+      backgroundColor: '#F8F8F8',
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 12,
+    },
+    receiptRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 4,
+    },
+    receiptLabel: {
+      fontSize: 13,
+      color: Colors.gray500,
+    },
+    receiptValue: {
+      fontSize: 13,
+      color: Colors.black,
+      fontWeight: '500',
+    },
+    receiptValueBold: {
+      fontSize: 14,
+      fontWeight: '700',
+    },
+    ratingRow: {
+      flexDirection: 'row',
+      gap: 2,
+      marginTop: 8,
+    },
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: '#E5E7EB',
+      marginLeft: 72,
+    },
+    ghostText: {
+      fontSize: 14,
+      color: Colors.gray500,
+      marginTop: 32,
+      alignSelf: 'center',
+    },
+  });

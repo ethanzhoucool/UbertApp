@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
 import {UbertButton} from '../common/UbertButton';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -12,6 +12,8 @@ interface Props {
 }
 
 export function PromoSheet({visible, onClose, onScheduleRide}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <BottomSheetModal visible={visible} onClose={onClose} maxHeight="60%">
       <View style={styles.heroIcon}>
@@ -42,6 +44,8 @@ export function PromoSheet({visible, onClose, onScheduleRide}: Props) {
 }
 
 function Bullet({icon, text}: {icon: string; text: string}) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <View style={styles.bulletRow}>
       <Icon name={icon} size={18} color={Colors.gray700} />
@@ -50,44 +54,46 @@ function Bullet({icon, text}: {icon: string; text: string}) {
   );
 }
 
-const styles = StyleSheet.create({
-  heroIcon: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    backgroundColor: '#E8F5E9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginTop: 4,
-    marginBottom: 18,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: Colors.black,
-    textAlign: 'center',
-  },
-  body: {
-    fontSize: 14,
-    color: Colors.gray500,
-    textAlign: 'center',
-    marginTop: 8,
-    lineHeight: 20,
-  },
-  bullets: {
-    marginTop: 18,
-    marginBottom: 22,
-    gap: 10,
-  },
-  bulletRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  bulletText: {
-    fontSize: 14,
-    color: Colors.black,
-    flex: 1,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    heroIcon: {
+      width: 84,
+      height: 84,
+      borderRadius: 42,
+      backgroundColor: '#E8F5E9',
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'center',
+      marginTop: 4,
+      marginBottom: 18,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: '800',
+      letterSpacing: -0.5,
+      color: Colors.black,
+      textAlign: 'center',
+    },
+    body: {
+      fontSize: 15,
+      color: Colors.gray700,
+      textAlign: 'center',
+      marginTop: 8,
+      lineHeight: 22,
+    },
+    bullets: {
+      marginTop: 18,
+      marginBottom: 22,
+      gap: 10,
+    },
+    bulletRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    bulletText: {
+      fontSize: 15,
+      color: Colors.black,
+      flex: 1,
+    },
+  });

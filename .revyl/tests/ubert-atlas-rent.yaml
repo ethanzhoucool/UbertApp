@@ -1,0 +1,61 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 3cc017b8-d0d2-4f1d-9aeb-023a047af111
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T20:58:48-07:00"
+    checksum: a645277195508c1006f454290f65b842c3c2a8b531745a1295397a57cabd7797
+test:
+    metadata:
+        name: ubert-atlas-rent
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - rent
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder text "Where to?", a black pill labeled "Now" next to the search bar, and saved places labeled "Work" and "Home". A "Suggestions" section shows cards labeled "Ride", "Package", "Reserve", and "Rent". A bottom tab bar shows "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Services" tab in the bottom tab bar to open the Services bottom sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Services bottom sheet is visible. It overlays the Home screen and contains service cards including "Ride", "Package", "Reserve", and "Rent". Each card shows a small icon and a label.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Rent" service card inside the Services bottom sheet to open the rental browse screen.
+        - type: validation
+          step_type: validation
+          step_description: The Rent Browse Cars screen is visible. Header title is "Rent a car" with a back chevron. Below the header are headings "Available cars near you" and "Delivered to your door in 30 minutes." A scrollable list of cars is shown, each row containing a colored thumbnail with a car icon, the make and model (e.g. "Toyota Corolla", "Honda CR-V", "Tesla Model 3", "Ford F-150", "Chrysler Pacifica", "BMW M2"), a short description, a meta row with seat count and transmission, and a price row showing hourly rate (e.g. "$11/hr") and daily rate (e.g. "$65/day"), plus a trailing chevron.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Tesla Model 3" row in the available cars list to open its rental details.
+        - type: validation
+          step_type: validation
+          step_description: The Rent Details screen is visible. Header title is "Tesla Model 3" with a back chevron. A large colored banner at the top contains a car icon. Below are the car name "Tesla Model 3", description "Electric sedan, Autopilot included", and a spec row with "5 seats", "Automatic", and "Full tank included". Two date-picker sections are shown - a "PICKUP DATE" label with a horizontally scrollable row of date chips ("Today", "Tomorrow", "+2d", etc.) and a "RETURN DATE" label with another horizontal date chip row. A rate box near the bottom shows "$19/hr · $119/day". A black "Continue" button is pinned at the bottom of the screen.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Tomorrow" date chip in the "PICKUP DATE" row to change the pickup date.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Continue" button pinned at the bottom of the Rent Details screen to proceed to confirmation.
+        - type: validation
+          step_type: validation
+          step_description: The Confirm Rental screen is visible. Header title is "Confirm rental" with a back chevron. The body shows a "Review your rental" heading, a colored banner with a car icon, the selected car name "Tesla Model 3" with description "Electric sedan, Autopilot included", a "DATES" section with "Pickup" and "Return" rows showing formatted dates (e.g. "Mon, May 21" / "Wed, May 23"), and a "PRICING" section with "Daily rate" ($119.00), "Insurance" ($12.00 / day), and "Service fee" ($8.00) rows. A "Total" row near the bottom shows a dollar amount (e.g. "$238.00"). A black "Confirm rental" button is pinned at the bottom of the screen.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Confirm rental" button pinned at the bottom of the Confirm Rental screen to finalize the rental.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. A success toast reading "Rental confirmed" is briefly shown. The "Where to?" search bar, "Rides"/"Delivery" tabs, "Suggestions" cards including "Rent", and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

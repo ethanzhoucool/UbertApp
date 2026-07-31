@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useMemo, useState, useRef, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -12,7 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BottomSheetModal} from '../common/BottomSheetModal';
 import {Driver} from '../../data/mockDriver';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Message {
   id: string;
@@ -45,6 +45,8 @@ function nowTime(): string {
 }
 
 export function MessageSheet({visible, onClose, driver}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState('');
   const scrollRef = useRef<ScrollView>(null);
@@ -166,96 +168,97 @@ export function MessageSheet({visible, onClose, driver}: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: 480,
-  },
-  thread: {
-    flex: 1,
-  },
-  threadContent: {
-    paddingVertical: 8,
-  },
-  bubbleRow: {
-    marginBottom: 10,
-  },
-  bubbleRowMe: {
-    alignItems: 'flex-end',
-  },
-  bubbleRowThem: {
-    alignItems: 'flex-start',
-  },
-  bubble: {
-    maxWidth: '80%',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 18,
-  },
-  bubbleMe: {
-    backgroundColor: Colors.black,
-    borderBottomRightRadius: 4,
-  },
-  bubbleThem: {
-    backgroundColor: '#F0F0F0',
-    borderBottomLeftRadius: 4,
-  },
-  bubbleText: {
-    fontSize: 15,
-    color: Colors.black,
-  },
-  bubbleTextMe: {
-    color: Colors.white,
-  },
-  time: {
-    fontSize: 11,
-    color: Colors.gray500,
-    marginTop: 3,
-    marginHorizontal: 6,
-  },
-  quickRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    paddingVertical: 8,
-  },
-  quickPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
-    backgroundColor: '#F0F0F0',
-  },
-  quickText: {
-    fontSize: 13,
-    color: Colors.black,
-    fontWeight: '500',
-  },
-  composer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingTop: 8,
-    paddingBottom: 8,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#ECECEC',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#F3F3F3',
-    borderRadius: 22,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 15,
-    color: Colors.black,
-  },
-  sendBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendBtnDisabled: {
-    opacity: 0.4,
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      height: 480,
+    },
+    thread: {
+      flex: 1,
+    },
+    threadContent: {
+      paddingVertical: 8,
+    },
+    bubbleRow: {
+      marginBottom: 10,
+    },
+    bubbleRowMe: {
+      alignItems: 'flex-end',
+    },
+    bubbleRowThem: {
+      alignItems: 'flex-start',
+    },
+    bubble: {
+      maxWidth: '80%',
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 18,
+    },
+    bubbleMe: {
+      backgroundColor: Colors.black,
+      borderBottomRightRadius: 4,
+    },
+    bubbleThem: {
+      backgroundColor: '#F0F0F0',
+      borderBottomLeftRadius: 4,
+    },
+    bubbleText: {
+      fontSize: 15,
+      color: Colors.black,
+    },
+    bubbleTextMe: {
+      color: Colors.white,
+    },
+    time: {
+      fontSize: 11,
+      color: Colors.gray500,
+      marginTop: 3,
+      marginHorizontal: 6,
+    },
+    quickRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      paddingVertical: 8,
+    },
+    quickPill: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 16,
+      backgroundColor: '#F0F0F0',
+    },
+    quickText: {
+      fontSize: 13,
+      color: Colors.black,
+      fontWeight: '500',
+    },
+    composer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingTop: 8,
+      paddingBottom: 8,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: '#ECECEC',
+    },
+    input: {
+      flex: 1,
+      backgroundColor: '#F3F3F3',
+      borderRadius: 22,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      fontSize: 15,
+      color: Colors.black,
+    },
+    sendBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: Colors.black,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    sendBtnDisabled: {
+      opacity: 0.4,
+    },
+  });

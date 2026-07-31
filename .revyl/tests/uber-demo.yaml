@@ -1,0 +1,31 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 0461d3cd-f707-43b6-bec7-199e411f56e0
+    remote_version: 28
+    local_version: 28
+    last_synced_at: "2026-05-20T17:15:49-07:00"
+    checksum: 59ba874a6eaebbb91e90a5a17dafae8b26b5218afab73c11c50dc42a0ca74e07
+test:
+    metadata:
+        name: uber demo
+        platform: ios
+        tags:
+            - ethan
+    build:
+        name: Ubert
+    variables:
+        key: value1
+    blocks:
+        - type: instructions
+          step_type: instruction
+          step_description: Get a trip to work
+        - type: instructions
+          step_type: instruction
+          step_description: Confirm the UberX ride request for the price of $12.43 by tapping 'Confirm UberX'.
+        - type: instructions
+          step_type: instruction
+          step_description: Rate the driver Kofi 5 stars, select the '$1' tip option, and tap 'Done' to submit the feedback.
+        - type: validation
+          step_type: instruction
+          step_description: Verify that the app returns to the main home screen after submitting the feedback.

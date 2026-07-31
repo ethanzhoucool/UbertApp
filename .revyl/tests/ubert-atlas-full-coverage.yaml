@@ -1,0 +1,69 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 1875038b-3bf2-44e1-af14-34de1c2f71e4
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T17:20:34-07:00"
+    checksum: ccadc9a0936ec975f4044066ed030f935e41582ace4f1a943eca571d7227cf90
+test:
+    metadata:
+        name: ubert atlas full coverage
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder text "Where to?", a black pill labeled "Now" next to the search bar, and saved places labeled "Work" and "Home". A "Suggestions" section shows cards labeled "Ride", "Package", "Reserve", and "Rent". A bottom tab bar shows "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Where to?" search bar near the top of the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Search screen is visible. Header shows the current origin address with a green dot, and a destination input field with placeholder "Where to?" is focused. A "Recent" section below lists saved places including "Home" and "Work". A "Suggestions" section below it lists destinations such as "Central Park", "LaGuardia Airport", and "Times Square".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the row labeled "Central Park" in the Recent or Suggestions list to pick it as the destination.
+        - type: validation
+          step_type: validation
+          step_description: The Ride Selection screen is visible. The top half shows a map with a route polyline between two markers. The bottom sheet shows the origin and destination addresses, a "Select a ride" heading, a scrollable list of ride options (e.g. UberX, Comfort, UberXL, Black), a payment row, and a black "Confirm" CTA button at the bottom whose label includes the ride name and a dollar price.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Confirm" button at the bottom of the Ride Selection screen to book the currently-selected ride.
+        - type: validation
+          step_type: validation
+          step_description: The Finding Driver screen is visible. The screen has a black background with a white "Finding your driver" heading, three pulsing dots, a status timeline with rows "Confirming your request", "Finding nearby drivers", "Driver matched! Confirming pickup", a bottom info row showing "Ride type" and "Estimated fare", and an outlined "Cancel" button at the bottom.
+        - type: manual
+          step_type: wait
+          step_description: "6"
+        - type: validation
+          step_type: validation
+          step_description: The Driver Matched screen is visible. A map fills the top portion of the screen showing an animated car marker approaching a pickup pin. The bottom card shows the driver's name, a star rating, the license plate, action buttons, and a black "Start Trip" button.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Start Trip" button at the bottom of the Driver Matched screen.
+        - type: validation
+          step_type: validation
+          step_description: The Trip In Progress screen is visible. A map fills the top portion of the screen showing the car moving along a route polyline toward the destination. The bottom card shows a "Heading to your destination" heading with the remaining minutes and arrival time.
+        - type: manual
+          step_type: wait
+          step_description: "14"
+        - type: validation
+          step_type: validation
+          step_description: The Trip Complete screen is visible. The heading "You've arrived" is shown at the top, with a stats row showing "Distance", "Duration", and "Total". Below are a star-rating row, a "Compliments" section with chips like "Good conversation", "Expert driving", "Great music", "Clean vehicle", a tip section "Tip ...?" with options "$1", "$2", "$5", "Other", and a black "Done" button at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Done" button at the bottom of the Trip Complete screen to finish the trip and return Home.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

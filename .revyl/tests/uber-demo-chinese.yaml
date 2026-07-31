@@ -1,0 +1,22 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 29ea10cd-5ea2-4dc6-9c2d-1b051044c539
+    remote_version: 6
+    local_version: 6
+    last_synced_at: "2026-05-20T17:18:22-07:00"
+    checksum: 871ed918d4ce724828a611f793184885b5f8deea5ce1f08e6f9700b1d8f25043
+test:
+    metadata:
+        name: uber demo (chinese)
+        platform: ios
+        tags:
+            - ethan
+    build:
+        name: Ubert
+    variables:
+        key: value1
+    blocks:
+        - type: instructions
+          step_type: instruction
+          step_description: 测试整个下单流程一直到送达

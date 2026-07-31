@@ -1,0 +1,67 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 921a2b6c-d085-41a6-ab75-da62700e0503
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-20T20:59:15-07:00"
+    checksum: f304a3f670f9c71639ad5ddfdcc55f7bc77f8270071ff9dc1e20437a5a0ebdb1
+test:
+    metadata:
+        name: ubert-atlas-reserve
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - reserve
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder text "Where to?", a black pill labeled "Now" next to the search bar, and saved places labeled "Work" and "Home". A "Suggestions" section shows cards labeled "Ride", "Package", "Reserve", and "Rent". A bottom tab bar shows "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Services" tab in the bottom tab bar to open the Services sheet.
+        - type: validation
+          step_type: validation
+          step_description: The Services bottom sheet is visible with the heading "Services". It lists service rows including "Ride", "Package", "Reserve", and "Rent". The "Reserve" row shows the Reserve icon and a subtitle indicating scheduling a ride in advance.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Reserve" service card row in the Services sheet to start the Reserve flow.
+        - type: validation
+          step_type: validation
+          step_description: The Reserve Schedule screen is visible. The header title reads "Reserve a ride" with a back chevron on the left. The heading "When and where?" is shown. A "PICKUP DATE" section displays a horizontally scrollable row of day chips including "Today", "Tomorrow", "+2 days", "+3 days". A "PICKUP TIME" section displays a wrapped grid of time chips including "8:00 AM", "9:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM", "8:00 PM". A "PICKUP LOCATION" field shows "350 5th Ave, New York, NY" with a green location icon. A "DROP-OFF LOCATION" field shows "LaGuardia Airport, Queens, NY". A black "Next - choose ride" CTA button is pinned to the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the day chip labeled "Tomorrow" in the PICKUP DATE row.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the time chip labeled "10:00 AM" in the PICKUP TIME grid.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Next - choose ride" button pinned at the bottom of the Reserve Schedule screen.
+        - type: validation
+          step_type: validation
+          step_description: The Reserve Ride Type screen is visible. The header title reads "Choose ride type" with a back chevron. A pinned summary card at the top shows "Pickup scheduled" with the chosen date and "10:00 AM", a green pickup location row with "350 5th Ave, New York, NY", and a black drop-off location row with "LaGuardia Airport, Queens, NY". Below is a "Select a ride" section with a scrollable list of ride option cards including "UberX", "Comfort", "UberXL", and "Black", each showing description, ETA, capacity, and price (e.g. "$12.43", "$15.82", "$18.24", "$32.10"). A black "Continue" CTA button pinned at the bottom shows the currently selected ride name and price.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Comfort" ride option card in the Select a ride list.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Continue" button pinned at the bottom of the Reserve Ride Type screen.
+        - type: validation
+          step_type: validation
+          step_description: The Reserve Confirm screen is visible. The header title reads "Confirm reservation" with a back chevron. The heading "Reserve your ride" is shown. A "SCHEDULED PICKUP" card shows the selected date and "10:00 AM" with an event-available icon. A "ROUTE" section shows the pickup "350 5th Ave, New York, NY" (green icon) and drop-off "LaGuardia Airport, Queens, NY" (black icon). A "RIDE" section shows "Vehicle" with value "Comfort" and "Estimated fare" with value "$15.82". A cancellation policy disclaimer is shown reading "Free cancellation until 1 hour before pickup. You'll be charged the estimated fare unless traffic or route changes." A black "Reserve ride" CTA button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Reserve ride" button pinned at the bottom of the Reserve Confirm screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again with a toast notification reading "Ride reserved" briefly shown over the screen. The "Where to?" search bar, "Rides"/"Delivery" tabs, the Suggestions cards "Ride", "Package", "Reserve", "Rent", and the bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

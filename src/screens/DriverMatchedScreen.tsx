@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, StatusBar, Text, Image, TouchableOpacity} from 'react-native';
-import MapView, {Marker, Polyline, PROVIDER_DEFAULT} from 'react-native-maps';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {View, StyleSheet, StatusBar, Text, Image, Animated} from 'react-native';
+import {PressScale} from '../components/common/PressScale';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {MapBackground} from '../components/common/MapBackground';
 import {UbertButton} from '../components/common/UbertButton';
 import {Divider} from '../components/common/Divider';
 import {Toast} from '../components/common/Toast';
@@ -13,9 +14,8 @@ import {CallingSheet} from '../components/sheets/CallingSheet';
 import {ShareTripSheet} from '../components/sheets/ShareTripSheet';
 import {SafetySheet} from '../components/sheets/SafetySheet';
 import {RootStackParamList} from '../navigation/types';
-import {useTrip} from '../store/TripContext';
 import {driverApproachCoords} from '../data/mockRouteCoords';
-import {Colors} from '../theme';
+import {useColors, ColorPalette} from '../theme';
 
 type ActiveSheet = 'message' | 'call' | 'share' | 'safety' | null;
 
@@ -25,26 +25,23 @@ type Props = {
 };
 
 export function DriverMatchedScreen({navigation, route}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
   const {driver} = route.params;
-  const {state} = useTrip();
   const [driverIndex, setDriverIndex] = useState(0);
   const [eta, setEta] = useState(3);
   const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
+  const chipOpacity = useRef(new Animated.Value(1)).current;
+  const carProgressAnim = useRef(new Animated.Value(1)).current;
+  const [carProgress, setCarProgress] = useState(1);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setToastVisible(true);
   };
-
-  const driverCoord =
-    driverApproachCoords[driverIndex] ||
-    driverApproachCoords[driverApproachCoords.length - 1];
-
-  // The remaining route: from current driver position to pickup (end of array)
-  const remainingRoute = driverApproachCoords.slice(driverIndex);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,18 +56,50 @@ export function DriverMatchedScreen({navigation, route}: Props) {
     return () => clearInterval(interval);
   }, []);
 
+  // Drive carProgress 1 → 0 (far → pickup) smoothly via Animated.
+  useEffect(() => {
+    const target =
+      1 - driverIndex / Math.max(1, driverApproachCoords.length - 1);
+    Animated.timing(carProgressAnim, {
+      toValue: target,
+      duration: 800,
+      useNativeDriver: false,
+    }).start();
+  }, [driverIndex, carProgressAnim]);
+
+  useEffect(() => {
+    const id = carProgressAnim.addListener(({value}) => setCarProgress(value));
+    return () => carProgressAnim.removeListener(id);
+  }, [carProgressAnim]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setEta(prev => {
-        if (prev <= 0) {
+        if (prev <= 1) {
           clearInterval(interval);
           return 0;
         }
         return prev - 1;
       });
-    }, 2800);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Crossfade the ETA chip text whenever `eta` changes.
+  useEffect(() => {
+    Animated.sequence([
+      Animated.timing(chipOpacity, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+      Animated.timing(chipOpacity, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [eta, chipOpacity]);
 
   const arrived = driverIndex >= driverApproachCoords.length - 1;
 
@@ -80,57 +109,27 @@ export function DriverMatchedScreen({navigation, route}: Props) {
 
       {/* Map */}
       <View style={styles.mapArea}>
-        <MapView
-          provider={PROVIDER_DEFAULT}
-          style={styles.map}
-          initialRegion={{
-            latitude: state.origin.latitude,
-            longitude: state.origin.longitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.015,
-          }}>
-          {/* Route line from driver to pickup — shrinks as driver progresses */}
-          {remainingRoute.length >= 2 && (
-            <Polyline
-              coordinates={remainingRoute}
-              strokeColor={Colors.black}
-              strokeWidth={4}
-            />
-          )}
-
-          {/* Pickup marker */}
-          <Marker
-            coordinate={{
-              latitude: state.origin.latitude,
-              longitude: state.origin.longitude,
-            }}>
-            <View style={styles.pickupMarker}>
-              <View style={styles.pickupDot} />
-            </View>
-          </Marker>
-
-          {/* Driver marker */}
-          <Marker
-            coordinate={{
-              latitude: driverCoord.latitude,
-              longitude: driverCoord.longitude,
-            }}>
-            <View style={styles.carMarker}>
-              <Icon name="local-taxi" size={20} color={Colors.white} />
-            </View>
-          </Marker>
-        </MapView>
+        <MapBackground
+          showPickup
+          showPolyline
+          showCar={!arrived}
+          carProgress={carProgress}
+          style={StyleSheet.absoluteFillObject}
+        />
 
         {/* ETA chip */}
         {!arrived && (
-          <View style={[styles.etaChip, {top: insets.top + 10}]}>
-            <Text style={styles.etaChipText}>{eta} min away</Text>
-          </View>
+          <Animated.View
+            style={[styles.etaChip, {top: insets.top + 16, opacity: chipOpacity}]}>
+            <Text style={styles.etaChipText}>
+              {eta <= 0 ? 'Arriving now' : `${eta} min away`}
+            </Text>
+          </Animated.View>
         )}
       </View>
 
       {/* Bottom card */}
-      <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 12}]}>
+      <View style={[styles.bottomCard, {paddingBottom: insets.bottom + 16}]}>
         <View style={styles.handle} />
 
         <Text style={styles.statusText}>
@@ -222,17 +221,20 @@ function ActionCircle({
   label: string;
   onPress: () => void;
 }) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
-    <TouchableOpacity style={styles.actionBtn} onPress={onPress} activeOpacity={0.7}>
+    <PressScale style={styles.actionBtn} onPress={onPress}>
       <View style={styles.actionCircle}>
-        <Icon name={icon} size={20} color={Colors.black} />
+        <Icon name={icon} size={18} color={Colors.black} />
       </View>
       <Text style={styles.actionLabel}>{label}</Text>
-    </TouchableOpacity>
+    </PressScale>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.gray100,
@@ -240,40 +242,19 @@ const styles = StyleSheet.create({
   mapArea: {
     flex: 1,
   },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  pickupMarker: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(39,110,241,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickupDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#276EF1',
-    borderWidth: 2,
-    borderColor: Colors.white,
-  },
-  carMarker: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   etaChip: {
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: Colors.black,
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    zIndex: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    shadowOffset: {width: 0, height: 2},
+    elevation: 4,
   },
   etaChipText: {
     fontSize: 14,
@@ -282,10 +263,15 @@ const styles = StyleSheet.create({
   },
   bottomCard: {
     backgroundColor: Colors.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     paddingHorizontal: 16,
     paddingTop: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    shadowOffset: {width: 0, height: -4},
+    elevation: 12,
   },
   handle: {
     width: 32,
@@ -314,6 +300,8 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     backgroundColor: Colors.gray200,
+    borderWidth: 1.5,
+    borderColor: Colors.white,
   },
   driverInfo: {
     flex: 1,
@@ -321,7 +309,7 @@ const styles = StyleSheet.create({
   },
   driverName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: Colors.black,
   },
   ratingRow: {
@@ -343,11 +331,11 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: Colors.gray300,
     borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   plateText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
     color: Colors.black,
     letterSpacing: 0.5,
@@ -363,7 +351,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F3F3F3',
+    backgroundColor: Colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -372,4 +360,4 @@ const styles = StyleSheet.create({
     color: Colors.gray700,
     marginTop: 5,
   },
-});
+  });

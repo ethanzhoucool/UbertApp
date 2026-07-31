@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useMemo, useEffect, useRef, useState} from 'react';
 import {
   Modal,
   View,
@@ -12,7 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Driver} from '../../data/mockDriver';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   visible: boolean;
@@ -21,6 +21,8 @@ interface Props {
 }
 
 export function CallingSheet({visible, onClose, driver}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
   const pulse = useRef(new Animated.Value(0)).current;
   const [seconds, setSeconds] = useState(0);
@@ -115,6 +117,8 @@ export function CallingSheet({visible, onClose, driver}: Props) {
 }
 
 function ControlButton({icon, label}: {icon: string; label: string}) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <TouchableOpacity style={styles.controlBtn} activeOpacity={0.7}>
       <View style={styles.controlCircle}>
@@ -125,81 +129,82 @@ function ControlButton({icon, label}: {icon: string; label: string}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0A0A0A',
-    alignItems: 'center',
-  },
-  label: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.6)',
-  },
-  avatarWrap: {
-    width: 140,
-    height: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 24,
-    marginBottom: 22,
-  },
-  ring: {
-    position: 'absolute',
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#222',
-  },
-  name: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: Colors.white,
-  },
-  sub: {
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.5)',
-    marginTop: 6,
-  },
-  controls: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  controlRow: {
-    flexDirection: 'row',
-    gap: 28,
-    marginBottom: 36,
-  },
-  controlBtn: {
-    alignItems: 'center',
-  },
-  controlCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  controlLabel: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.7)',
-    marginTop: 6,
-  },
-  endBtn: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: '#E11900',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#0A0A0A',
+      alignItems: 'center',
+    },
+    label: {
+      fontSize: 16,
+      color: 'rgba(255,255,255,0.6)',
+    },
+    avatarWrap: {
+      width: 140,
+      height: 140,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 24,
+      marginBottom: 22,
+    },
+    ring: {
+      position: 'absolute',
+      width: 140,
+      height: 140,
+      borderRadius: 70,
+      backgroundColor: 'rgba(255,255,255,0.15)',
+    },
+    avatar: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: '#222',
+    },
+    name: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: Colors.white,
+    },
+    sub: {
+      fontSize: 15,
+      color: 'rgba(255,255,255,0.5)',
+      marginTop: 6,
+    },
+    controls: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+    },
+    controlRow: {
+      flexDirection: 'row',
+      gap: 28,
+      marginBottom: 36,
+    },
+    controlBtn: {
+      alignItems: 'center',
+    },
+    controlCircle: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: 'rgba(255,255,255,0.15)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    controlLabel: {
+      fontSize: 12,
+      color: 'rgba(255,255,255,0.7)',
+      marginTop: 6,
+    },
+    endBtn: {
+      width: 68,
+      height: 68,
+      borderRadius: 34,
+      backgroundColor: '#E11900',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });

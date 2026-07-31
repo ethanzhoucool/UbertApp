@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,7 +8,7 @@ import Animated, {
   withDelay,
 } from 'react-native-reanimated';
 import {StyleSheet} from 'react-native';
-import {Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 interface Props {
   delay?: number;
@@ -19,8 +19,11 @@ interface Props {
 export function PulsingDot({
   delay = 0,
   size = 10,
-  color = Colors.white,
+  color,
 }: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
+  const resolvedColor = color ?? Colors.white;
   const opacity = useSharedValue(0.3);
 
   useEffect(() => {
@@ -45,13 +48,14 @@ export function PulsingDot({
     <Animated.View
       style={[
         styles.dot,
-        {width: size, height: size, borderRadius: size / 2, backgroundColor: color},
+        {width: size, height: size, borderRadius: size / 2, backgroundColor: resolvedColor},
         animatedStyle,
       ]}
     />
   );
 }
 
-const styles = StyleSheet.create({
-  dot: {},
-});
+const makeStyles = (_Colors: ColorPalette) =>
+  StyleSheet.create({
+    dot: {},
+  });

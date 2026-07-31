@@ -1,0 +1,82 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 9bd4d18d-5f86-40f7-8706-c8e5d8851b03
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-05-21T09:22:57-07:00"
+    checksum: 793512c3e61164e4f7d2869db1f9298f1ce75fccd404ac3b7ba6182c4c94b55a
+test:
+    metadata:
+        name: ubert-atlas-saved-places
+        platform: ios
+        tags:
+            - ethan
+            - atlas
+            - saved-places
+    build:
+        name: Ubert
+    blocks:
+        - type: validation
+          step_type: validation
+          step_description: The Splash screen is visible. Background is solid black and the white "UBERT" wordmark is shown center-screen.
+        - type: manual
+          step_type: wait
+          step_description: "3"
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible. There are two top tabs labeled "Rides" and "Delivery", a search bar with placeholder "Where to?", and a bottom tab bar showing "Home", "Services", "Activity", "Account".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Account" tab in the bottom tab bar on the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Account bottom sheet is visible. A profile header shows the avatar, the name "Ethan Zhou", a star rating "4.97", and an "Edit" button. The menu lists rows including "Help", "Wallet", "Activity", "Promotions", "Uber One", "Send a gift", "Saved places", "Settings", and a "Sign Out" button.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Saved places" row in the Account sheet menu.
+        - type: validation
+          step_type: validation
+          step_description: The Saved places screen is visible. The header title reads "Saved places" with a back chevron. An intro paragraph reads "Save places you visit often so you can request a ride faster." Below it are saved-place rows including "Home" with subtitle "123 W 72nd St, New York, NY" and "Work" with subtitle "1 World Trade Center, New York, NY", each row has a circular gray icon on the left and a chevron on the right. At the bottom of the list there is an "Add a saved place" row with a "+" icon.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Add a saved place" row at the bottom of the Saved places list.
+        - type: validation
+          step_type: validation
+          step_description: The Add a saved place screen is visible. The header title reads "Add a saved place" with a back chevron. The screen shows a "LABEL" text field with placeholder "e.g. Gym, Mom's house", an "ADDRESS" text field with placeholder "Street address", and an "ICON" picker grid with chips labeled "Home", "Work", "Gym", "School", "Loved one", "Cafe", and "Other". A black "Save place" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "LABEL" text field on the Add a saved place screen and type "Gym".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "ADDRESS" text field on the Add a saved place screen and type "455 W 43rd St, New York, NY".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Gym" chip in the "ICON" picker grid to select the gym icon.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Save place" button pinned at the bottom of the Add a saved place screen.
+        - type: validation
+          step_type: validation
+          step_description: The Saved places screen is visible again. The list now shows the original "Home" and "Work" rows plus a new row labeled "Gym" with subtitle "455 W 43rd St, New York, NY". The "Add a saved place" row is still shown at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "Home" row in the Saved places list.
+        - type: validation
+          step_type: validation
+          step_description: The Edit place screen is visible. The header title reads "Edit Home" with a back chevron. The screen shows a "LABEL" text field pre-filled with "Home", an "ADDRESS" text field pre-filled with "123 W 72nd St, New York, NY", an "ICON" picker grid with chips "Home", "Work", "Gym", "School", "Loved one", "Cafe", "Other", and a red "Delete place" row with a trash icon. A black "Save changes" button is pinned at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the "LABEL" text field on the Edit place screen, clear its contents, and type "Apartment".
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the black "Save changes" button pinned at the bottom of the Edit place screen.
+        - type: validation
+          step_type: validation
+          step_description: The Saved places screen is visible again. The first row's label is now "Apartment" with subtitle "123 W 72nd St, New York, NY". The "Work" and newly added "Gym" rows are still shown, and the "Add a saved place" row is at the bottom.
+        - type: instructions
+          step_type: instruction
+          step_description: Tap the back chevron in the header of the Saved places screen to return to the Home screen.
+        - type: validation
+          step_type: validation
+          step_description: The Home screen is visible again. The "Where to?" search bar, "Rides"/"Delivery" tabs, and bottom tab bar with "Home", "Services", "Activity", "Account" are all visible.

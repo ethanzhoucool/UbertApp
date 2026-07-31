@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -17,7 +17,7 @@ import {StarRating} from '../components/common/StarRating';
 import {Divider} from '../components/common/Divider';
 import {RootStackParamList} from '../navigation/types';
 import {useTrip} from '../store/TripContext';
-import {Colors} from '../theme';
+import {useColors, ColorPalette} from '../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'TripComplete'>;
@@ -32,6 +32,8 @@ const COMPLIMENTS = [
 ];
 
 export function TripCompleteScreen({navigation, route}: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
   const {driver, fare, duration} = route.params;
   const {state, dispatch} = useTrip();
@@ -176,7 +178,16 @@ export function TripCompleteScreen({navigation, route}: Props) {
       </ScrollView>
 
       {/* Fixed footer */}
-      <View style={[styles.footer, {paddingBottom: insets.bottom + 8}]}>
+      <View style={[styles.footer, {paddingBottom: insets.bottom + 16}]}>
+        <TouchableOpacity
+          style={styles.receiptBtn}
+          activeOpacity={0.7}
+          onPress={() =>
+            navigation.navigate('TripReceipt', {driver, fare, duration})
+          }>
+          <Icon name="receipt-long" size={18} color={Colors.black} />
+          <Text style={styles.receiptBtnText}>View receipt</Text>
+        </TouchableOpacity>
         <UbertButton title="Done" onPress={handleDone} />
       </View>
     </View>
@@ -192,6 +203,8 @@ function StatItem({
   label: string;
   value: string;
 }) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <View style={styles.statItem}>
       <Icon name={icon} size={20} color={Colors.gray700} />
@@ -212,6 +225,8 @@ function Compliment({
   selected: boolean;
   onPress: () => void;
 }) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <TouchableOpacity
       style={[styles.complimentChip, selected && styles.complimentChipActive]}
@@ -233,7 +248,8 @@ function Compliment({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: ColorPalette) =>
+  StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -267,10 +283,11 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '800',
     color: Colors.black,
     textAlign: 'center',
+    letterSpacing: -0.5,
   },
 
   // Stats
@@ -279,7 +296,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 24,
-    gap: 0,
+    gap: 16,
   },
   statItem: {
     alignItems: 'center',
@@ -287,19 +304,19 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: Colors.gray500,
+    color: Colors.gray700,
     marginTop: 4,
   },
   statValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     color: Colors.black,
     marginTop: 2,
   },
   statDivider: {
-    width: 1,
-    height: 36,
-    backgroundColor: Colors.gray200,
+    width: 1.5,
+    height: 32,
+    backgroundColor: Colors.borderSubtle,
   },
 
   // Driver rating
@@ -339,10 +356,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.gray200,
+    borderColor: Colors.borderSubtle,
     borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     gap: 6,
   },
   complimentChipActive: {
@@ -366,13 +383,13 @@ const styles = StyleSheet.create({
   tipRow: {
     flexDirection: 'row',
     marginTop: 12,
-    gap: 10,
+    gap: 8,
   },
   tipPill: {
     flex: 1,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#F3F3F3',
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: Colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -380,8 +397,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.black,
   },
   tipPillText: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '700',
     color: Colors.black,
   },
   tipPillTextActive: {
@@ -427,4 +444,15 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: Colors.gray200,
   },
-});
+  receiptBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: Colors.gray100,
+    gap: 8,
+  },
+  receiptBtnText: {fontSize: 15, fontWeight: '700', color: Colors.black},
+  });
