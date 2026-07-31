@@ -1,22 +1,18 @@
 import React, {useEffect, useMemo} from 'react';
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, StatusBar, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RootStackParamList} from '../../navigation/types';
 import {useColors, ColorPalette} from '../../theme';
+import {UberOneGold} from '../../theme/uberOneGold';
+import {SparkleField} from '../../components/uber-one/SparkleField';
+import {SparklyGoldButton} from '../../components/uber-one/SparklyGoldButton';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'UberOneSuccess'>;
 };
 
-const GOLD = '#C8A24B';
 const BG = '#0A0A0B';
 
 export function UberOneSuccessScreen({navigation}: Props) {
@@ -34,8 +30,20 @@ export function UberOneSuccessScreen({navigation}: Props) {
 
       <View style={styles.content}>
         <View style={styles.checkOuter}>
+          <SparkleField
+            style={styles.checkSparkles}
+            sparkles={[
+              {top: 8, left: 14, size: 3, delay: 0, bright: true},
+              {top: 20, left: 96, size: 2.5, delay: 280, bright: true},
+              {top: 88, left: 18, size: 2, delay: 560},
+              {top: 96, left: 90, size: 3, delay: 140, bright: true},
+              {top: 52, left: 4, size: 2, delay: 720},
+              {top: 48, left: 108, size: 2, delay: 400},
+            ]}
+          />
           <View style={styles.checkInner}>
-            <Icon name="check" size={56} color={BG} />
+            <View style={styles.checkShine} />
+            <Icon name="check" size={56} color={UberOneGold.onGold} />
           </View>
         </View>
 
@@ -50,14 +58,12 @@ export function UberOneSuccessScreen({navigation}: Props) {
       </View>
 
       <View style={[styles.footer, {paddingBottom: insets.bottom + 16}]}>
-        <TouchableOpacity
-          style={styles.primaryBtn}
-          activeOpacity={0.85}
+        <SparklyGoldButton
+          label="Get started"
           onPress={() =>
             navigation.reset({index: 0, routes: [{name: 'Home'}]})
-          }>
-          <Text style={styles.primaryBtnText}>Get started</Text>
-        </TouchableOpacity>
+          }
+        />
       </View>
     </View>
   );
@@ -69,7 +75,7 @@ function Item({icon, label}: {icon: string; label: string}) {
   return (
     <View style={styles.item}>
       <View style={styles.itemIcon}>
-        <Icon name={icon} size={20} color={GOLD} />
+        <Icon name={icon} size={20} color={UberOneGold.base} />
       </View>
       <Text style={styles.itemText}>{label}</Text>
     </View>
@@ -88,18 +94,37 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 120,
       height: 120,
       borderRadius: 60,
-      backgroundColor: 'rgba(200,162,75,0.18)',
+      backgroundColor: UberOneGold.soft,
       alignItems: 'center',
       justifyContent: 'center',
       alignSelf: 'center',
+    },
+    checkSparkles: {
+      width: 120,
+      height: 120,
     },
     checkInner: {
       width: 96,
       height: 96,
       borderRadius: 48,
-      backgroundColor: GOLD,
+      backgroundColor: UberOneGold.base,
       alignItems: 'center',
       justifyContent: 'center',
+      overflow: 'hidden',
+      borderWidth: 1.5,
+      borderColor: UberOneGold.bright,
+      shadowColor: UberOneGold.bright,
+      shadowOffset: {width: 0, height: 0},
+      shadowOpacity: 0.6,
+      shadowRadius: 16,
+    },
+    checkShine: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '42%',
+      backgroundColor: 'rgba(255,255,255,0.28)',
     },
     title: {
       fontSize: 30,
@@ -122,17 +147,10 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 38,
       height: 38,
       borderRadius: 19,
-      backgroundColor: 'rgba(200,162,75,0.12)',
+      backgroundColor: UberOneGold.softer,
       alignItems: 'center',
       justifyContent: 'center',
     },
     itemText: {color: Colors.white, fontSize: 15, fontWeight: '600'},
     footer: {paddingHorizontal: 24, paddingTop: 10},
-    primaryBtn: {
-      backgroundColor: Colors.white,
-      borderRadius: 30,
-      paddingVertical: 16,
-      alignItems: 'center',
-    },
-    primaryBtnText: {color: BG, fontWeight: '900', fontSize: 16, letterSpacing: 0.2},
   });
