@@ -213,7 +213,7 @@ const makeStyles = (Colors: ColorPalette) =>
       backgroundColor: Colors.black,
     },
     planTitle: {fontSize: 16, fontWeight: '700', color: Colors.black},
-    planMeta: {fontSize: 12, color: '#E8C547', marginTop: 2, fontWeight: '700'},
+    planMeta: {fontSize: 12, color: '#05944F', marginTop: 2, fontWeight: '700'},
     planPrice: {fontSize: 15, fontWeight: '700', color: Colors.black},
     payCard: {
       flexDirection: 'row',

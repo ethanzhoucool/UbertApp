@@ -12,14 +12,12 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RootStackParamList} from '../../navigation/types';
 import {useColors, ColorPalette} from '../../theme';
-import {UberOneGold} from '../../theme/uberOneGold';
-import {SparkleField} from '../../components/uber-one/SparkleField';
-import {SparklyGoldButton} from '../../components/uber-one/SparklyGoldButton';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'UberOneLanding'>;
 };
 
+const GOLD = '#C8A24B';
 const BG = '#0A0A0B';
 const SURFACE = '#161618';
 const TEXT_SUB = 'rgba(255,255,255,0.72)';
@@ -53,38 +51,23 @@ export function UberOneLandingScreen({navigation}: Props) {
             <Icon name="close" size={22} color={Colors.white} />
           </TouchableOpacity>
 
-          {/* Uber One brand lockup with sparkly gold accent */}
+          {/* Uber One brand lockup with gold underline */}
           <View style={styles.brandLockup}>
             <Text style={styles.brandUber}>Uber</Text>
-            <View style={styles.brandOneWrap}>
-              <Text style={styles.brandOne}>One</Text>
-              <SparkleField
-                style={styles.brandSparkles}
-                sparkles={[
-                  {top: -4, left: -6, size: 3, delay: 0, bright: true},
-                  {top: 8, left: 52, size: 2.5, delay: 350, bright: true},
-                  {top: 28, left: 18, size: 2, delay: 700},
-                  {top: -2, left: 78, size: 2, delay: 180},
-                ]}
-              />
-            </View>
+            <Text style={styles.brandOne}>One</Text>
           </View>
-          <View style={styles.brandUnderlineWrap}>
-            <View style={styles.brandUnderline} />
-            <View style={styles.brandUnderlineShine} />
-          </View>
+          <View style={styles.brandUnderline} />
 
           <Text style={styles.heroTitle}>
             Members save 10% on rides, free delivery, and more.
           </Text>
 
-          {/* 3-row benefits list with sparkly gold checkmarks */}
+          {/* 3-row benefits list with gold checkmarks */}
           <View style={styles.perksList}>
             {PERKS.map(p => (
               <View key={p} style={styles.perkRow}>
                 <View style={styles.perkCheck}>
-                  <View style={styles.perkCheckShine} />
-                  <Icon name="check" size={16} color={UberOneGold.onGold} />
+                  <Icon name="check" size={16} color={BG} />
                 </View>
                 <Text style={styles.perkText}>{p}</Text>
               </View>
@@ -106,10 +89,12 @@ export function UberOneLandingScreen({navigation}: Props) {
       </ScrollView>
 
       <View style={[styles.footer, {paddingBottom: insets.bottom + 12}]}>
-        <SparklyGoldButton
-          label="Try free for 1 month"
-          onPress={() => navigation.navigate('UberOnePayment')}
-        />
+        <TouchableOpacity
+          style={styles.subscribeBtn}
+          activeOpacity={0.85}
+          onPress={() => navigation.navigate('UberOnePayment')}>
+          <Text style={styles.subscribeBtnText}>Try free for 1 month</Text>
+        </TouchableOpacity>
         <Text style={styles.subtitlePrice}>$9.99/mo after</Text>
       </View>
     </View>
@@ -128,12 +113,7 @@ const makeStyles = (Colors: ColorPalette) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    brandLockup: {
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      marginTop: 42,
-      gap: 8,
-    },
+    brandLockup: {flexDirection: 'row', alignItems: 'flex-end', marginTop: 42, gap: 8},
     brandUber: {
       fontSize: 44,
       fontWeight: '900',
@@ -141,44 +121,19 @@ const makeStyles = (Colors: ColorPalette) =>
       letterSpacing: -1,
       lineHeight: 48,
     },
-    brandOneWrap: {
-      position: 'relative',
-      paddingRight: 10,
-      paddingTop: 6,
-    },
     brandOne: {
       fontSize: 44,
       fontWeight: '900',
-      color: UberOneGold.base,
+      color: GOLD,
       letterSpacing: -1,
       lineHeight: 48,
-      textShadowColor: UberOneGold.glow,
-      textShadowOffset: {width: 0, height: 0},
-      textShadowRadius: 10,
-    },
-    brandSparkles: {
-      width: 100,
-      height: 48,
-    },
-    brandUnderlineWrap: {
-      width: 64,
-      height: 5,
-      marginTop: 12,
-      borderRadius: 3,
-      overflow: 'hidden',
-      backgroundColor: UberOneGold.deep,
     },
     brandUnderline: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: UberOneGold.base,
-    },
-    brandUnderlineShine: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      height: '50%',
-      backgroundColor: 'rgba(255,255,255,0.35)',
+      width: 56,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: GOLD,
+      marginTop: 12,
     },
     heroTitle: {
       fontSize: 28,
@@ -194,24 +149,9 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 26,
       height: 26,
       borderRadius: 13,
-      backgroundColor: UberOneGold.base,
+      backgroundColor: GOLD,
       alignItems: 'center',
       justifyContent: 'center',
-      overflow: 'hidden',
-      borderWidth: 1,
-      borderColor: UberOneGold.bright,
-      shadowColor: UberOneGold.bright,
-      shadowOffset: {width: 0, height: 0},
-      shadowOpacity: 0.45,
-      shadowRadius: 6,
-    },
-    perkCheckShine: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      height: '45%',
-      backgroundColor: 'rgba(255,255,255,0.28)',
     },
     perkText: {flex: 1, color: Colors.white, fontSize: 15, fontWeight: '600'},
     learnMore: {
@@ -245,6 +185,13 @@ const makeStyles = (Colors: ColorPalette) =>
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: 'rgba(255,255,255,0.1)',
     },
+    subscribeBtn: {
+      backgroundColor: GOLD,
+      borderRadius: 30,
+      paddingVertical: 16,
+      alignItems: 'center',
+    },
+    subscribeBtnText: {color: BG, fontWeight: '900', fontSize: 16, letterSpacing: 0.2},
     subtitlePrice: {
       color: Colors.white,
       fontSize: 13,

@@ -12,13 +12,11 @@ build:
     output: android/app/build/outputs/apk/debug/app-debug.apk
     platforms:
         android:
-            app_id: 3ccf53c0-314a-498a-b9c8-0b7bd173c57f
             command: cd android && ./gradlew assembleDebug
             output: android/app/build/outputs/apk/debug/app-debug.apk
         ios:
-            app_id: 3ccf53c0-314a-498a-b9c8-0b7bd173c57f
-            command: npm ci && cd ios && pod install && xcodebuild -workspace UberFrontPageHotReload.xcworkspace -scheme UberFrontPageHotReload -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO build
-            output: ios/build/Build/Products/Release-iphonesimulator/UberFrontPageHotReload.app
+            command: cd ios && xcodebuild -workspace *.xcworkspace -scheme * -configuration Debug -sdk iphonesimulator -derivedDataPath build
+            output: ios/build/Build/Products/Debug-iphonesimulator/*.app
 defaults:
     open_browser: false
     timeout: 600
