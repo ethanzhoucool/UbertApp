@@ -19,7 +19,7 @@ export const LightColors = {
 
   // Brand surfaces
   eatsGreen: '#06C167',
-  uberOneGold: '#C8A24B',
+  uberOneGold: '#E8C547',
   muted: '#6B6B6B',
   fieldFill: '#F6F6F6',
   hairline: '#E5E5E5',
@@ -69,7 +69,7 @@ export const DarkColors: typeof LightColors = {
 
   // Brand surfaces (kept brand-true on dark too; muted slightly for contrast)
   eatsGreen: '#06C167',
-  uberOneGold: '#C8A24B',
+  uberOneGold: '#E8C547',
   muted: '#9A9A9A',
   fieldFill: '#1F1F1F',
   hairline: '#2A2A2A',
