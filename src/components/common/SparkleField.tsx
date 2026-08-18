@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import {UberOneGold} from '../../theme/uberOneGold';
+import {Gold} from '../../theme/gold';
 
 type Sparkle = {
   top: number;
@@ -80,8 +80,8 @@ function Twinkle({
           left,
           width: size,
           height: size,
-          backgroundColor: bright ? UberOneGold.bright : UberOneGold.base,
-          shadowColor: UberOneGold.bright,
+          backgroundColor: bright ? Gold.bright : Gold.base,
+          shadowColor: Gold.bright,
         },
         style,
       ]}
@@ -94,7 +94,7 @@ type Props = {
   sparkles?: Sparkle[];
 };
 
-/** Twinkling diamond sparkles layered over Uber One gold accents. */
+/** Twinkling diamond sparkles layered over gold accents. */
 export function SparkleField({style, sparkles = DEFAULT_SPARKLES}: Props) {
   return (
     <View pointerEvents="none" style={[styles.field, style]}>

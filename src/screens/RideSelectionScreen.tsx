@@ -257,6 +257,7 @@ export function RideSelectionScreen({navigation, route}: Props) {
           <UbertButton
             title={`Confirm ${selectedRide.name} • ${selectedRide.price}`}
             onPress={handleChooseRide}
+            variant="gold"
           />
         </View>
       </View>

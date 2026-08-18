@@ -12,8 +12,8 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RootStackParamList} from '../../navigation/types';
 import {useColors, ColorPalette} from '../../theme';
-import {UberOneGold} from '../../theme/uberOneGold';
-import {SparkleField} from '../../components/uber-one/SparkleField';
+import {Gold} from '../../theme/gold';
+import {SparkleField} from '../../components/common/SparkleField';
 import {SparklyGoldButton} from '../../components/uber-one/SparklyGoldButton';
 
 type Props = {
@@ -84,7 +84,7 @@ export function UberOneLandingScreen({navigation}: Props) {
               <View key={p} style={styles.perkRow}>
                 <View style={styles.perkCheck}>
                   <View style={styles.perkCheckShine} />
-                  <Icon name="check" size={16} color={UberOneGold.onGold} />
+                  <Icon name="check" size={16} color={Gold.onGold} />
                 </View>
                 <Text style={styles.perkText}>{p}</Text>
               </View>
@@ -149,10 +149,10 @@ const makeStyles = (Colors: ColorPalette) =>
     brandOne: {
       fontSize: 44,
       fontWeight: '900',
-      color: UberOneGold.base,
+      color: Gold.base,
       letterSpacing: -1,
       lineHeight: 48,
-      textShadowColor: UberOneGold.glow,
+      textShadowColor: Gold.glow,
       textShadowOffset: {width: 0, height: 0},
       textShadowRadius: 10,
     },
@@ -166,11 +166,11 @@ const makeStyles = (Colors: ColorPalette) =>
       marginTop: 12,
       borderRadius: 3,
       overflow: 'hidden',
-      backgroundColor: UberOneGold.deep,
+      backgroundColor: Gold.deep,
     },
     brandUnderline: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: UberOneGold.base,
+      backgroundColor: Gold.base,
     },
     brandUnderlineShine: {
       position: 'absolute',
@@ -194,13 +194,13 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 26,
       height: 26,
       borderRadius: 13,
-      backgroundColor: UberOneGold.base,
+      backgroundColor: Gold.base,
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'hidden',
       borderWidth: 1,
-      borderColor: UberOneGold.bright,
-      shadowColor: UberOneGold.bright,
+      borderColor: Gold.bright,
+      shadowColor: Gold.bright,
       shadowOffset: {width: 0, height: 0},
       shadowOpacity: 0.45,
       shadowRadius: 6,

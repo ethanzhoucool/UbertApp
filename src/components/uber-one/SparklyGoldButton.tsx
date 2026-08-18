@@ -14,8 +14,8 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import {UberOneGold} from '../../theme/uberOneGold';
-import {SparkleField} from './SparkleField';
+import {Gold} from '../../theme/gold';
+import {SparkleField} from '../common/SparkleField';
 
 type Props = {
   label: string;
@@ -65,15 +65,15 @@ export function SparklyGoldButton({label, onPress, style, labelStyle}: Props) {
 
 const styles = StyleSheet.create({
   btn: {
-    backgroundColor: UberOneGold.base,
+    backgroundColor: Gold.base,
     borderRadius: 30,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: UberOneGold.bright,
-    shadowColor: UberOneGold.bright,
+    borderColor: Gold.bright,
+    shadowColor: Gold.bright,
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.55,
     shadowRadius: 14,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     opacity: 0.95,
   },
   label: {
-    color: UberOneGold.onGold,
+    color: Gold.onGold,
     fontWeight: '900',
     fontSize: 16,
     letterSpacing: 0.2,

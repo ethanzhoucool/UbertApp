@@ -1,5 +1,5 @@
-/** Sparkly metallic gold palette for Uber One membership surfaces. */
-export const UberOneGold = {
+/** Sparkly metallic gold palette shared by premium gold surfaces. */
+export const Gold = {
   base: '#E8C547',
   bright: '#FFE58A',
   deep: '#B8860B',

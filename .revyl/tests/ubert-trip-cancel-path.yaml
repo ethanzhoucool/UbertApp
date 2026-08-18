@@ -36,10 +36,10 @@ test:
           step_description: Tap the row labeled "Times Square" in the Suggestions list.
         - type: validation
           step_type: validation
-          step_description: The Ride Selection screen is visible with a map at the top, a "Select a ride" heading, ride options listed, and a black "Confirm" CTA at the bottom that includes a dollar price.
+          step_description: The Ride Selection screen is visible with a map at the top, a "Select a ride" heading, ride options listed, and a shiny gold "Confirm" CTA at the bottom that includes a dollar price.
         - type: instructions
           step_type: instruction
-          step_description: Tap the black "Confirm" button at the bottom of the Ride Selection screen.
+          step_description: Tap the shiny gold "Confirm" button at the bottom of the Ride Selection screen.
         - type: validation
           step_type: validation
           step_description: The Finding Driver screen is visible with a black background, a white "Finding your driver" heading, and an outlined "Cancel" button at the bottom of the screen.

@@ -5,8 +5,8 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RootStackParamList} from '../../navigation/types';
 import {useColors, ColorPalette} from '../../theme';
-import {UberOneGold} from '../../theme/uberOneGold';
-import {SparkleField} from '../../components/uber-one/SparkleField';
+import {Gold} from '../../theme/gold';
+import {SparkleField} from '../../components/common/SparkleField';
 import {SparklyGoldButton} from '../../components/uber-one/SparklyGoldButton';
 
 type Props = {
@@ -43,7 +43,7 @@ export function UberOneSuccessScreen({navigation}: Props) {
           />
           <View style={styles.checkInner}>
             <View style={styles.checkShine} />
-            <Icon name="check" size={56} color={UberOneGold.onGold} />
+            <Icon name="check" size={56} color={Gold.onGold} />
           </View>
         </View>
 
@@ -75,7 +75,7 @@ function Item({icon, label}: {icon: string; label: string}) {
   return (
     <View style={styles.item}>
       <View style={styles.itemIcon}>
-        <Icon name={icon} size={20} color={UberOneGold.base} />
+        <Icon name={icon} size={20} color={Gold.base} />
       </View>
       <Text style={styles.itemText}>{label}</Text>
     </View>
@@ -94,7 +94,7 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 120,
       height: 120,
       borderRadius: 60,
-      backgroundColor: UberOneGold.soft,
+      backgroundColor: Gold.soft,
       alignItems: 'center',
       justifyContent: 'center',
       alignSelf: 'center',
@@ -107,13 +107,13 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 96,
       height: 96,
       borderRadius: 48,
-      backgroundColor: UberOneGold.base,
+      backgroundColor: Gold.base,
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'hidden',
       borderWidth: 1.5,
-      borderColor: UberOneGold.bright,
-      shadowColor: UberOneGold.bright,
+      borderColor: Gold.bright,
+      shadowColor: Gold.bright,
       shadowOffset: {width: 0, height: 0},
       shadowOpacity: 0.6,
       shadowRadius: 16,
@@ -147,7 +147,7 @@ const makeStyles = (Colors: ColorPalette) =>
       width: 38,
       height: 38,
       borderRadius: 19,
-      backgroundColor: UberOneGold.softer,
+      backgroundColor: Gold.softer,
       alignItems: 'center',
       justifyContent: 'center',
     },
