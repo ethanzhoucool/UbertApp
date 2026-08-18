@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {UberOneGold} from '../../theme/uberOneGold';
 
-type Sparkle = {
+export type Sparkle = {
   top: number;
   left: number;
   size: number;

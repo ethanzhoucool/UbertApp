@@ -15,17 +15,33 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {UberOneGold} from '../../theme/uberOneGold';
-import {SparkleField} from './SparkleField';
+import {SparkleField, Sparkle} from './SparkleField';
+
+const DEFAULT_SPARKLES: Sparkle[] = [
+  {top: 10, left: 28, size: 2.5, delay: 0, bright: true},
+  {top: 28, left: 72, size: 2, delay: 300},
+  {top: 8, left: 140, size: 3, delay: 600, bright: true},
+  {top: 30, left: 210, size: 2, delay: 180},
+  {top: 12, left: 260, size: 2.5, delay: 840, bright: true},
+  {top: 26, left: 310, size: 2, delay: 480},
+];
 
 type Props = {
   label: string;
   onPress: () => void;
   style?: ViewStyle;
   labelStyle?: TextStyle;
+  sparkles?: Sparkle[];
 };
 
 /** Pill CTA with a sweeping shimmer and twinkling sparkles. */
-export function SparklyGoldButton({label, onPress, style, labelStyle}: Props) {
+export function SparklyGoldButton({
+  label,
+  onPress,
+  style,
+  labelStyle,
+  sparkles = DEFAULT_SPARKLES,
+}: Props) {
   const shimmer = useSharedValue(-0.4);
 
   useEffect(() => {
@@ -47,17 +63,7 @@ export function SparklyGoldButton({label, onPress, style, labelStyle}: Props) {
       onPress={onPress}>
       <View style={styles.highlight} />
       <Animated.View style={[styles.shimmer, shimmerStyle]} />
-      <SparkleField
-        style={styles.sparkles}
-        sparkles={[
-          {top: 10, left: 28, size: 2.5, delay: 0, bright: true},
-          {top: 28, left: 72, size: 2, delay: 300},
-          {top: 8, left: 140, size: 3, delay: 600, bright: true},
-          {top: 30, left: 210, size: 2, delay: 180},
-          {top: 12, left: 260, size: 2.5, delay: 840, bright: true},
-          {top: 26, left: 310, size: 2, delay: 480},
-        ]}
-      />
+      <SparkleField style={styles.sparkles} sparkles={sparkles} />
       <Text style={[styles.label, labelStyle]}>{label}</Text>
     </TouchableOpacity>
   );

@@ -5,7 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {UbertButton} from '../components/common/UbertButton';
+import {SparklyGoldButton} from '../components/uber-one/SparklyGoldButton';
+import type {Sparkle} from '../components/uber-one/SparkleField';
 import {Divider} from '../components/common/Divider';
 import {RideOptionCard} from '../components/ride/RideOptionCard';
 import {PaymentSheet} from '../components/sheets/PaymentSheet';
@@ -21,6 +22,18 @@ import {useColors, ColorPalette} from '../theme';
 // regression. Keep this `false` on main; flip to `true` only for the broken
 // build variant.
 const BROKEN_BOOKING = false;
+
+// Spread wider than the component default so the full-width CTA twinkles
+// across its whole span rather than only the left half.
+const CONFIRM_SPARKLES: Sparkle[] = [
+  {top: 12, left: 24, size: 2.5, delay: 0, bright: true},
+  {top: 32, left: 78, size: 2, delay: 300},
+  {top: 10, left: 148, size: 3, delay: 600, bright: true},
+  {top: 34, left: 214, size: 2, delay: 180},
+  {top: 14, left: 268, size: 2.5, delay: 840, bright: true},
+  {top: 30, left: 318, size: 2, delay: 480},
+  {top: 12, left: 356, size: 2.5, delay: 1020, bright: true},
+];
 
 function formatScheduleLabel(date: Date): string {
   const diffMins = Math.round((date.getTime() - Date.now()) / 60000);
@@ -254,9 +267,11 @@ export function RideSelectionScreen({navigation, route}: Props) {
 
         {/* CTA button */}
         <View style={[styles.footer, {paddingBottom: insets.bottom + 8}]}>
-          <UbertButton
-            title={`Confirm ${selectedRide.name} • ${selectedRide.price}`}
+          <SparklyGoldButton
+            label={`Confirm ${selectedRide.name} • ${selectedRide.price}`}
             onPress={handleChooseRide}
+            style={styles.confirmBtn}
+            sparkles={CONFIRM_SPARKLES}
           />
         </View>
       </View>
@@ -477,5 +492,8 @@ const makeStyles = (Colors: ColorPalette) =>
 
     footer: {
       paddingTop: 8,
+    },
+    confirmBtn: {
+      borderRadius: 8,
     },
   });
