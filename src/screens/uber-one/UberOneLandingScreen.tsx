@@ -20,10 +20,6 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'UberOneLanding'>;
 };
 
-const BG = '#0A0A0B';
-const SURFACE = '#161618';
-const TEXT_SUB = 'rgba(255,255,255,0.72)';
-
 const PERKS = [
   '10% off rides and eligible Eats orders',
   'Free delivery on eligible orders',
@@ -41,7 +37,7 @@ export function UberOneLandingScreen({navigation}: Props) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={BG} />
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
       <ScrollView
         contentContainerStyle={{paddingBottom: 180}}
         showsVerticalScrollIndicator={false}>
@@ -50,7 +46,7 @@ export function UberOneLandingScreen({navigation}: Props) {
             onPress={() => navigation.goBack()}
             style={styles.closeBtn}
             hitSlop={{top: 12, bottom: 12, left: 12, right: 12}}>
-            <Icon name="close" size={22} color={Colors.white} />
+            <Icon name="close" size={22} color={Colors.iconPrimary} />
           </TouchableOpacity>
 
           {/* Uber One brand lockup with sparkly gold accent */}
@@ -60,6 +56,7 @@ export function UberOneLandingScreen({navigation}: Props) {
               <Text style={styles.brandOne}>One</Text>
               <SparkleField
                 style={styles.brandSparkles}
+                tone="onLight"
                 sparkles={[
                   {top: -4, left: -6, size: 3, delay: 0, bright: true},
                   {top: 8, left: 52, size: 2.5, delay: 350, bright: true},
@@ -97,7 +94,7 @@ export function UberOneLandingScreen({navigation}: Props) {
           activeOpacity={0.7}
           onPress={() => navigation.navigate('UberOneBenefits')}>
           <Text style={styles.learnMoreText}>See all benefits</Text>
-          <Icon name="arrow-forward" size={18} color={Colors.white} />
+          <Icon name="arrow-forward" size={18} color={Colors.iconPrimary} />
         </TouchableOpacity>
 
         <Text style={styles.legal}>
@@ -118,13 +115,13 @@ export function UberOneLandingScreen({navigation}: Props) {
 
 const makeStyles = (Colors: ColorPalette) =>
   StyleSheet.create({
-    container: {flex: 1, backgroundColor: BG},
+    container: {flex: 1, backgroundColor: Colors.background},
     hero: {paddingHorizontal: 24, paddingBottom: 32},
     closeBtn: {
       width: 36,
       height: 36,
       borderRadius: 18,
-      backgroundColor: 'rgba(255,255,255,0.1)',
+      backgroundColor: Colors.closeBtnBg,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -137,7 +134,7 @@ const makeStyles = (Colors: ColorPalette) =>
     brandUber: {
       fontSize: 44,
       fontWeight: '900',
-      color: Colors.white,
+      color: Colors.textPrimary,
       letterSpacing: -1,
       lineHeight: 48,
     },
@@ -149,10 +146,11 @@ const makeStyles = (Colors: ColorPalette) =>
     brandOne: {
       fontSize: 44,
       fontWeight: '900',
-      color: UberOneGold.base,
+      // Pale gold is unreadable on white, so the wordmark uses the deep tone.
+      color: UberOneGold.deep,
       letterSpacing: -1,
       lineHeight: 48,
-      textShadowColor: UberOneGold.glow,
+      textShadowColor: UberOneGold.soft,
       textShadowOffset: {width: 0, height: 0},
       textShadowRadius: 10,
     },
@@ -183,7 +181,7 @@ const makeStyles = (Colors: ColorPalette) =>
     heroTitle: {
       fontSize: 28,
       fontWeight: '800',
-      color: Colors.white,
+      color: Colors.textPrimary,
       marginTop: 22,
       letterSpacing: -0.4,
       lineHeight: 36,
@@ -213,22 +211,27 @@ const makeStyles = (Colors: ColorPalette) =>
       height: '45%',
       backgroundColor: 'rgba(255,255,255,0.28)',
     },
-    perkText: {flex: 1, color: Colors.white, fontSize: 15, fontWeight: '600'},
+    perkText: {
+      flex: 1,
+      color: Colors.textPrimary,
+      fontSize: 15,
+      fontWeight: '600',
+    },
     learnMore: {
       flexDirection: 'row',
       alignSelf: 'center',
       alignItems: 'center',
       paddingVertical: 14,
       paddingHorizontal: 18,
-      backgroundColor: SURFACE,
+      backgroundColor: Colors.surfaceAlt,
       borderRadius: 22,
       marginTop: 8,
       gap: 8,
     },
-    learnMoreText: {color: Colors.white, fontWeight: '700', fontSize: 14},
+    learnMoreText: {color: Colors.textPrimary, fontWeight: '700', fontSize: 14},
     legal: {
       fontSize: 12,
-      color: TEXT_SUB,
+      color: Colors.textTertiary,
       textAlign: 'center',
       marginTop: 22,
       marginHorizontal: 24,
@@ -241,12 +244,12 @@ const makeStyles = (Colors: ColorPalette) =>
       bottom: 0,
       paddingHorizontal: 16,
       paddingTop: 10,
-      backgroundColor: BG,
+      backgroundColor: Colors.background,
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: 'rgba(255,255,255,0.1)',
+      borderTopColor: Colors.border,
     },
     subtitlePrice: {
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontSize: 13,
       textAlign: 'center',
       marginTop: 10,

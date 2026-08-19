@@ -19,6 +19,14 @@ type Sparkle = {
   bright?: boolean;
 };
 
+/** Which surface the sparkles sit on: pale gold vanishes against white. */
+type Tone = 'onDark' | 'onLight';
+
+const TONES: Record<Tone, {base: string; bright: string}> = {
+  onDark: {base: UberOneGold.base, bright: UberOneGold.bright},
+  onLight: {base: UberOneGold.deep, bright: UberOneGold.base},
+};
+
 const DEFAULT_SPARKLES: Sparkle[] = [
   {top: 6, left: 8, size: 3, delay: 0, bright: true},
   {top: 18, left: 42, size: 2, delay: 280},
@@ -34,7 +42,8 @@ function Twinkle({
   size,
   delay,
   bright,
-}: Sparkle) {
+  tone,
+}: Sparkle & {tone: Tone}) {
   const opacity = useSharedValue(0.15);
   const scale = useSharedValue(0.6);
 
@@ -70,6 +79,8 @@ function Twinkle({
     transform: [{scale: scale.value}, {rotate: '45deg'}],
   }));
 
+  const palette = TONES[tone];
+
   return (
     <Animated.View
       pointerEvents="none"
@@ -80,8 +91,8 @@ function Twinkle({
           left,
           width: size,
           height: size,
-          backgroundColor: bright ? UberOneGold.bright : UberOneGold.base,
-          shadowColor: UberOneGold.bright,
+          backgroundColor: bright ? palette.bright : palette.base,
+          shadowColor: palette.bright,
         },
         style,
       ]}
@@ -92,14 +103,19 @@ function Twinkle({
 type Props = {
   style?: ViewStyle;
   sparkles?: Sparkle[];
+  tone?: Tone;
 };
 
 /** Twinkling diamond sparkles layered over Uber One gold accents. */
-export function SparkleField({style, sparkles = DEFAULT_SPARKLES}: Props) {
+export function SparkleField({
+  style,
+  sparkles = DEFAULT_SPARKLES,
+  tone = 'onDark',
+}: Props) {
   return (
     <View pointerEvents="none" style={[styles.field, style]}>
       {sparkles.map((s, i) => (
-        <Twinkle key={i} {...s} />
+        <Twinkle key={i} {...s} tone={tone} />
       ))}
     </View>
   );
