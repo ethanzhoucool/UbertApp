@@ -33,7 +33,7 @@ export function PackageRecipientScreen({navigation, route}: Props) {
   const [phone, setPhone] = useState(
     draft.recipientPhone ?? '+1 (555) 030-4455',
   );
-  const [address, setAddress] = useState(
+  const [address] = useState(
     draft.recipientAddress ?? '1 World Trade Center, New York, NY',
   );
   const [instructions, setInstructions] = useState('');

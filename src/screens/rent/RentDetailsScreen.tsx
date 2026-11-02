@@ -16,7 +16,7 @@ import {ScreenHeader} from '../../components/common/ScreenHeader';
 import {UbertButton} from '../../components/common/UbertButton';
 import {RootStackParamList} from '../../navigation/types';
 import {rentalCars, vehicleGlyph} from '../../data/mockCars';
-import {useColors, ColorPalette, Colors} from '../../theme';
+import {useColors, ColorPalette} from '../../theme';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'RentDetails'>;
