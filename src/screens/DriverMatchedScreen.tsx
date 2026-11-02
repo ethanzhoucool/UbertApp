@@ -36,7 +36,6 @@ export function DriverMatchedScreen({navigation, route}: Props) {
   const [toastVisible, setToastVisible] = useState(false);
   const chipOpacity = useRef(new Animated.Value(1)).current;
   const carProgressAnim = useRef(new Animated.Value(1)).current;
-  const [carProgress, setCarProgress] = useState(1);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -56,21 +55,17 @@ export function DriverMatchedScreen({navigation, route}: Props) {
     return () => clearInterval(interval);
   }, []);
 
-  // Drive carProgress 1 → 0 (far → pickup) smoothly via Animated.
+  // Drive carProgress 1 → 0 (far → pickup) smoothly on the native driver;
+  // MapBackground reads it through transforms, so no per-frame re-render.
   useEffect(() => {
     const target =
       1 - driverIndex / Math.max(1, driverApproachCoords.length - 1);
     Animated.timing(carProgressAnim, {
       toValue: target,
       duration: 800,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }, [driverIndex, carProgressAnim]);
-
-  useEffect(() => {
-    const id = carProgressAnim.addListener(({value}) => setCarProgress(value));
-    return () => carProgressAnim.removeListener(id);
-  }, [carProgressAnim]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -113,7 +108,7 @@ export function DriverMatchedScreen({navigation, route}: Props) {
           showPickup
           showPolyline
           showCar={!arrived}
-          carProgress={carProgress}
+          carProgress={carProgressAnim}
           style={StyleSheet.absoluteFillObject}
         />
 

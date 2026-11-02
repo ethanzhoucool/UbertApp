@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {memo, useMemo, useRef, useState} from 'react';
 import {
+  Animated,
   View,
   Text,
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   LayoutChangeEvent,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {buildSegments, carMarkerTransform} from './mapRoute';
 
 /**
  * MapBackground — a stylized faux-map background used across ride-flow screens.
@@ -25,79 +27,28 @@ interface Props {
   showDropoff?: boolean;
   showPolyline?: boolean;
   showCar?: boolean;
-  carProgress?: number;
+  /**
+   * 0..1 progress of the car along the route (0 = pickup, 1 = dropoff).
+   * The marker follows it through transforms only, so animate it with
+   * `useNativeDriver: true` and the screen does not re-render per frame.
+   */
+  carProgress?: Animated.Value;
   style?: StyleProp<ViewStyle>;
 }
 
-// Route waypoints (fractions of MapBackground size). The polyline traces the
-// existing road grid so the car appears to drive on real streets:
-//   pickup (24%, 60%) → along diagonal road (-12°) up to V2 cross-street
-//   → up the V2 vertical road (70%) to H1
-//   → along H1 (top:24%) to dropoff (76%, 24%)
-const PICKUP_PX = {x: 0.24, y: 0.6};
-const TURN_A_PX = {x: 0.7, y: 0.524};
-const TURN_B_PX = {x: 0.7, y: 0.24};
-const DROPOFF_PX = {x: 0.76, y: 0.24};
-
-interface Segment {
-  sx: number;
-  sy: number;
-  len: number;
-  deg: number;
-  rad: number;
-}
-
-function buildSegments(W: number, H: number): Segment[] {
-  const points = [PICKUP_PX, TURN_A_PX, TURN_B_PX, DROPOFF_PX];
-  const segs: Segment[] = [];
-  for (let i = 0; i < points.length - 1; i++) {
-    const a = points[i];
-    const b = points[i + 1];
-    const sx = a.x * W;
-    const sy = a.y * H;
-    const dx = (b.x - a.x) * W;
-    const dy = (b.y - a.y) * H;
-    const len = Math.sqrt(dx * dx + dy * dy);
-    const rad = Math.atan2(dy, dx);
-    const deg = (rad * 180) / Math.PI;
-    segs.push({sx, sy, len, deg, rad});
-  }
-  return segs;
-}
-
-function carPositionAlong(
-  segs: Segment[],
-  progress: number,
-): {x: number; y: number; bearing: number} {
-  const total = segs.reduce((sum, s) => sum + s.len, 0);
-  let remaining = Math.max(0, Math.min(1, progress)) * total;
-  for (const s of segs) {
-    if (remaining <= s.len) {
-      return {
-        x: s.sx + remaining * Math.cos(s.rad),
-        y: s.sy + remaining * Math.sin(s.rad),
-        bearing: s.deg,
-      };
-    }
-    remaining -= s.len;
-  }
-  const last = segs[segs.length - 1];
-  return {
-    x: last.sx + last.len * Math.cos(last.rad),
-    y: last.sy + last.len * Math.sin(last.rad),
-    bearing: last.deg,
-  };
-}
-
-export function MapBackground({
+// Memoized: every prop the ride screens pass is stable, so their
+// once-per-step state updates (ETA, route index) don't re-render the map.
+export const MapBackground = memo(function MapBackground({
   showPickup = false,
   showDropoff = false,
   showPolyline = false,
   showCar = false,
-  carProgress = 0,
+  carProgress,
   style,
 }: Props) {
   const [size, setSize] = useState({width: 0, height: 0});
+  const restingProgress = useRef(new Animated.Value(0)).current;
+  const progress = carProgress ?? restingProgress;
   const handleLayout = (e: LayoutChangeEvent) => {
     const {width, height} = e.nativeEvent.layout;
     if (width !== size.width || height !== size.height) {
@@ -105,8 +56,14 @@ export function MapBackground({
     }
   };
   const measured = size.width > 0 && size.height > 0;
-  const segs = measured ? buildSegments(size.width, size.height) : [];
-  const car = measured ? carPositionAlong(segs, carProgress) : null;
+  const segs = useMemo(
+    () => (measured ? buildSegments(size.width, size.height) : []),
+    [measured, size.width, size.height],
+  );
+  const car = useMemo(
+    () => (segs.length > 0 ? carMarkerTransform(progress, segs) : null),
+    [segs, progress],
+  );
   return (
     <View
       style={[styles.base, style]}
@@ -170,17 +127,19 @@ export function MapBackground({
 
       {/* Car marker — follows the polyline */}
       {showCar && car && (
-        <View
+        <Animated.View
           style={[
             styles.carMarker,
             {
-              left: car.x - 14,
-              top: car.y - 14,
-              transform: [{rotate: `${car.bearing}deg`}],
+              transform: [
+                {translateX: car.translateX},
+                {translateY: car.translateY},
+                {rotate: car.rotate},
+              ],
             },
           ]}>
           <Icon name="local-taxi" size={14} color="#FFFFFF" />
-        </View>
+        </Animated.View>
       )}
 
       {/* Pickup pin — green */}
@@ -200,7 +159,7 @@ export function MapBackground({
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   base: {
@@ -365,8 +324,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#111111',
   },
+  // Anchored at the map origin and moved to the car's centre point via
+  // translateX/translateY (offset by half its size so it stays centred).
   carMarker: {
     position: 'absolute',
+    left: -14,
+    top: -14,
     width: 28,
     height: 28,
     borderRadius: 14,

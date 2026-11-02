@@ -35,7 +35,6 @@ export function TripInProgressScreen({navigation, route}: Props) {
   const [carIndex, setCarIndex] = useState(0);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const carProgressAnim = useRef(new Animated.Value(0)).current;
-  const [carProgress, setCarProgress] = useState(0);
   const [minutesLeft, setMinutesLeft] = useState(8);
   const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
   const [toastMsg, setToastMsg] = useState('');
@@ -67,20 +66,17 @@ export function TripInProgressScreen({navigation, route}: Props) {
     return () => clearInterval(interval);
   }, [navigation, driver, state.selectedRide]);
 
-  // Drive carProgress 0 → 1 (pickup → destination) along the faux route.
+  // Drive carProgress 0 → 1 (pickup → destination) along the faux route on
+  // the native driver; MapBackground reads it through transforms, so no
+  // per-frame re-render.
   useEffect(() => {
     const target = carIndex / Math.max(1, routeCoordinates.length - 1);
     Animated.timing(carProgressAnim, {
       toValue: target,
       duration: 800,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }, [carIndex, carProgressAnim]);
-
-  useEffect(() => {
-    const id = carProgressAnim.addListener(({value}) => setCarProgress(value));
-    return () => carProgressAnim.removeListener(id);
-  }, [carProgressAnim]);
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -112,7 +108,7 @@ export function TripInProgressScreen({navigation, route}: Props) {
         showDropoff
         showPolyline
         showCar
-        carProgress={carProgress}
+        carProgress={carProgressAnim}
         style={styles.map}
       />
 
