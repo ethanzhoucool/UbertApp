@@ -16,6 +16,11 @@ import {UbertButton} from '../../components/common/UbertButton';
 import {RootStackParamList} from '../../navigation/types';
 import {useTrip, CartLineItem} from '../../store/TripContext';
 import {useColors, ColorPalette} from '../../theme';
+import {
+  DEFAULT_DELIVERY_TIP,
+  DELIVERY_TIP_OPTIONS,
+  deliveryTotals,
+} from '../../utils/deliveryTotals';
 
 const EATS_GREEN = '#06C167';
 const META_GRAY = '#6B6B6B';
@@ -25,34 +30,23 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'DeliveryCart'>;
 };
 
-const SERVICE_FEE = 2.49;
-const TAX_RATE = 0.0875;
-const TIP_OPTIONS = [1, 2, 3, 5];
-
 export function DeliveryCartScreen({navigation}: Props) {
   const Colors = useColors();
   const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
   const {state, dispatch} = useTrip();
-  const [tip, setTip] = useState<number>(2);
+  const [tip, setTip] = useState<number>(DEFAULT_DELIVERY_TIP);
   const [scheduleLater, setScheduleLater] = useState(false);
 
   useEffect(() => {
     console.log('[Ubert] DeliveryCartScreen mounted');
   }, []);
 
-  const subtotal = useMemo(
-    () =>
-      state.cart.reduce(
-        (sum, line) => sum + line.item.price * line.quantity,
-        0,
-      ),
-    [state.cart],
+  const {subtotal, deliveryFee, serviceFee, tax, total} = deliveryTotals(
+    state.cart,
+    state.cartRestaurant?.deliveryFee ?? 0,
+    tip,
   );
-
-  const deliveryFee = state.cartRestaurant?.deliveryFee ?? 0;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + deliveryFee + SERVICE_FEE + tip + tax;
 
   const handleStep = (lineId: string, delta: number) => {
     dispatch({type: 'CHANGE_CART_QTY', payload: {lineId, delta}});
@@ -130,7 +124,7 @@ export function DeliveryCartScreen({navigation}: Props) {
                 100% of the tip goes to your courier.
               </Text>
               <View style={styles.tipRow}>
-                {TIP_OPTIONS.map(amt => {
+                {DELIVERY_TIP_OPTIONS.map(amt => {
                   const active = tip === amt;
                   return (
                     <TouchableOpacity
@@ -199,7 +193,7 @@ export function DeliveryCartScreen({navigation}: Props) {
               />
               <SummaryRow
                 label="Service Fee"
-                value={`$${SERVICE_FEE.toFixed(2)}`}
+                value={`$${serviceFee.toFixed(2)}`}
               />
               <SummaryRow label="Tip" value={`$${tip.toFixed(2)}`} />
               <SummaryRow
@@ -219,7 +213,7 @@ export function DeliveryCartScreen({navigation}: Props) {
             <TouchableOpacity
               style={styles.checkoutBtn}
               activeOpacity={0.85}
-              onPress={() => navigation.navigate('DeliveryCheckout')}>
+              onPress={() => navigation.navigate('DeliveryCheckout', {tip})}>
               <Text style={styles.checkoutText}>Go to checkout</Text>
               <Text style={styles.checkoutPrice}>${total.toFixed(2)}</Text>
             </TouchableOpacity>

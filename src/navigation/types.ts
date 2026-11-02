@@ -44,7 +44,8 @@ export type RootStackParamList = {
   DeliveryBrowse: undefined;
   RestaurantDetail: {restaurantId: string};
   DeliveryCart: undefined;
-  DeliveryCheckout: undefined;
+  // `tip` is the amount chosen on the cart screen.
+  DeliveryCheckout: {tip?: number} | undefined;
   DeliveryTracking: undefined;
 
   // Package

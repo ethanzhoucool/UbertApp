@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {RouteProp} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RootStackParamList} from '../../navigation/types';
 import {useTrip} from '../../store/TripContext';
 import {recentPlaces} from '../../data/mockPlaces';
 import {useColors, ColorPalette} from '../../theme';
+import {DEFAULT_DELIVERY_TIP, deliveryTotals} from '../../utils/deliveryTotals';
 
 const EATS_GREEN = '#06C167';
 const META_GRAY = '#6B6B6B';
@@ -21,13 +23,10 @@ const FILL_GRAY = '#F6F6F6';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'DeliveryCheckout'>;
+  route: RouteProp<RootStackParamList, 'DeliveryCheckout'>;
 };
 
-const SERVICE_FEE = 2.49;
-const TAX_RATE = 0.0875;
-const TIP_DEFAULT = 2;
-
-export function DeliveryCheckoutScreen({navigation}: Props) {
+export function DeliveryCheckoutScreen({navigation, route}: Props) {
   const Colors = useColors();
   const styles = useMemo(() => makeStyles(Colors), [Colors]);
   const insets = useSafeAreaInsets();
@@ -39,18 +38,11 @@ export function DeliveryCheckoutScreen({navigation}: Props) {
     console.log('[Ubert] DeliveryCheckoutScreen mounted');
   }, []);
 
-  const subtotal = useMemo(
-    () =>
-      state.cart.reduce(
-        (sum, line) => sum + line.item.price * line.quantity,
-        0,
-      ),
-    [state.cart],
+  const {subtotal, deliveryFee, serviceFee, tip, tax, total} = deliveryTotals(
+    state.cart,
+    state.cartRestaurant?.deliveryFee ?? 0,
+    route.params?.tip ?? DEFAULT_DELIVERY_TIP,
   );
-
-  const deliveryFee = state.cartRestaurant?.deliveryFee ?? 0;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + deliveryFee + SERVICE_FEE + TIP_DEFAULT + tax;
 
   const etaText = state.cartRestaurant?.etaMaxMinutes
     ? `${state.cartRestaurant.etaMinutes}–${state.cartRestaurant.etaMaxMinutes} min`
@@ -192,9 +184,9 @@ export function DeliveryCheckoutScreen({navigation}: Props) {
               />
               <SummaryLine
                 label="Service Fee"
-                value={`$${SERVICE_FEE.toFixed(2)}`}
+                value={`$${serviceFee.toFixed(2)}`}
               />
-              <SummaryLine label="Tip" value={`$${TIP_DEFAULT.toFixed(2)}`} />
+              <SummaryLine label="Tip" value={`$${tip.toFixed(2)}`} />
               <SummaryLine
                 label="Taxes & Other Fees"
                 value={`$${tax.toFixed(2)}`}
