@@ -12,7 +12,7 @@ export interface CartLineItem {
   quantity: number;
 }
 
-interface TripState {
+export interface TripState {
   origin: Place;
   destination: Place | null;
   selectedRide: RideOption | null;
@@ -27,7 +27,7 @@ interface TripState {
   savedPayments: PaymentMethod[];
 }
 
-type TripAction =
+export type TripAction =
   | {type: 'SET_DESTINATION'; payload: Place}
   | {type: 'SET_RIDE'; payload: RideOption}
   | {type: 'SET_DRIVER'; payload: Driver}
@@ -40,7 +40,7 @@ type TripAction =
   | {type: 'ADD_PAYMENT'; payload: PaymentMethod}
   | {type: 'RESET'};
 
-const initialState: TripState = {
+export const initialState: TripState = {
   origin: currentLocation,
   destination: null,
   selectedRide: null,
@@ -53,7 +53,8 @@ const initialState: TripState = {
   savedPayments: seedPayments,
 };
 
-function tripReducer(state: TripState, action: TripAction): TripState {
+// Exported for unit tests; components should use useTrip().
+export function tripReducer(state: TripState, action: TripAction): TripState {
   switch (action.type) {
     case 'SET_DESTINATION':
       return {...state, destination: action.payload};
