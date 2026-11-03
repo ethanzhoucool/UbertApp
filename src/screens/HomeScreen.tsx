@@ -89,12 +89,6 @@ export function HomeScreen({navigation, route}: Props) {
   const [sheet, setSheet] = useState<Sheet>(null);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
-  const [tabLayouts, setTabLayouts] = useState<{
-    rides?: {x: number; width: number};
-    delivery?: {x: number; width: number};
-    courier?: {x: number; width: number};
-    shops?: {x: number; width: number};
-  }>({});
 
   const scheduleLabel = formatScheduleLabel(state.scheduledTime);
 
@@ -199,28 +193,24 @@ export function HomeScreen({navigation, route}: Props) {
               icon={<Image source={tabIcons.rides} style={styles.tabIcon} resizeMode="contain" />}
               active={activeTab === 'rides'}
               onPress={() => setActiveTab('rides')}
-              onLayout={layout => setTabLayouts(p => ({...p, rides: layout}))}
             />
             <TopTab
               label="Delivery"
               icon={<Image source={tabIcons.delivery} style={styles.tabIcon} resizeMode="contain" />}
               active={activeTab === 'delivery'}
               onPress={() => setActiveTab('delivery')}
-              onLayout={layout => setTabLayouts(p => ({...p, delivery: layout}))}
             />
             <TopTab
               label="Courier"
               icon={<Icon name="inventory-2" size={18} color={activeTab === 'courier' ? Colors.black : Colors.gray500} />}
               active={activeTab === 'courier'}
               onPress={() => setActiveTab('courier')}
-              onLayout={layout => setTabLayouts(p => ({...p, courier: layout}))}
             />
             <TopTab
               label="Shops"
               icon={<Icon name="shopping-cart" size={18} color={activeTab === 'shops' ? Colors.black : Colors.gray500} />}
               active={activeTab === 'shops'}
               onPress={() => setActiveTab('shops')}
-              onLayout={layout => setTabLayouts(p => ({...p, shops: layout}))}
             />
           </ScrollView>
 
@@ -519,24 +509,16 @@ function TopTab({
   icon,
   active,
   onPress,
-  onLayout,
 }: {
   label: string;
   icon: React.ReactNode;
   active: boolean;
   onPress: () => void;
-  onLayout: (layout: {x: number; width: number}) => void;
 }) {
   const Colors = useColors();
   const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
-    <TouchableOpacity
-      style={styles.tab}
-      onPress={onPress}
-      onLayout={e => {
-        const {x, width} = e.nativeEvent.layout;
-        onLayout({x, width});
-      }}>
+    <TouchableOpacity style={styles.tab} onPress={onPress}>
       {icon}
       <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>
         {label}

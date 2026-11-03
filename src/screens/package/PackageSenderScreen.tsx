@@ -29,7 +29,7 @@ export function PackageSenderScreen({navigation, route}: Props) {
   const {draft} = route.params;
   const [name, setName] = useState(draft.senderName ?? 'Ethan Zhou');
   const [phone, setPhone] = useState(draft.senderPhone ?? '+1 (555) 010-2233');
-  const [address, setAddress] = useState(
+  const [address] = useState(
     draft.senderAddress ?? '350 5th Ave, New York, NY',
   );
   const [instructions, setInstructions] = useState('');
