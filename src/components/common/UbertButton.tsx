@@ -8,7 +8,7 @@ import {
   Easing,
 } from 'react-native';
 import {UbertText} from './UbertText';
-import {Spacing, Shadows, useColors, ColorPalette} from '../../theme';
+import {Shadows, useColors, ColorPalette} from '../../theme';
 
 interface Props {
   title: string;
