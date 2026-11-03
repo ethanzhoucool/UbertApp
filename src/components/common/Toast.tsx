@@ -17,6 +17,16 @@ export function Toast({message, visible, onHide, duration = 2000}: Props) {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
 
+  // Callers pass `onHide` as an inline arrow, so it changes on every parent
+  // render. Read it through a ref: if it were an effect dependency, each
+  // parent re-render would cancel and restart the hide timer, and a screen
+  // that re-renders continuously (e.g. while the car marker animates) would
+  // keep the toast up indefinitely.
+  const onHideRef = useRef(onHide);
+  useEffect(() => {
+    onHideRef.current = onHide;
+  }, [onHide]);
+
   useEffect(() => {
     if (visible) {
       Animated.parallel([
@@ -44,12 +54,14 @@ export function Toast({message, visible, onHide, duration = 2000}: Props) {
             duration: 200,
             useNativeDriver: true,
           }),
-        ]).start(() => onHide());
+        ]).start(() => onHideRef.current());
       }, duration);
 
       return () => clearTimeout(timer);
     }
-  }, [visible, duration, opacity, translateY, onHide]);
+    // `message` is a dependency so a new message shown while the toast is
+    // already up gets its own full `duration`.
+  }, [visible, message, duration, opacity, translateY]);
 
   if (!visible) {return null;}
 
