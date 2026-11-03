@@ -76,6 +76,8 @@ npm test           # jest (__tests__/)
 
 ## CI
 
+[`.github/workflows/checks.yml`](.github/workflows/checks.yml) runs the three checks above (typecheck, lint, Jest) on Ubuntu for every pull request and every push to `main`.
+
 [`.github/workflows/ubert.yml`](.github/workflows/ubert.yml) runs on pushes to `main` (except Markdown-only and `uber image/` changes) and on manual dispatch. On `macos-latest` it installs pods and builds an unsigned **Release** `.app` for the iOS Simulator (`xcodebuild -workspace ios/UberFrontPageHotReload.xcworkspace -scheme UberFrontPageHotReload`). The JS bundle is embedded, so the app runs without Metro. The build is uploaded as the `Ubert-Simulator.app.zip` artifact.
 
 ## Revyl tests
